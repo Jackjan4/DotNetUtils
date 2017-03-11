@@ -1,46 +1,30 @@
 ﻿using System;
 
-namespace Collections
+namespace De.JanRoslan.NETUtils.Collections
 {
     public static class ArrayUtils
     {
+       
 
-
-        public static object[] Concat(params object[][] arrays)
+        public static T[] Concat<T>(params T[][] arrays)
         {
 
             int length = 0;
 
-            foreach (object[] arr in arrays)
+            foreach (T[] arr in arrays)
             {
                 length += arr.Length;
             }
 
-            object[] result = new object[length];
+            T[] result = new T[length];
 
             return result;
         }
 
-
-        public static byte[] Concat(params byte[][] arrays)
+        public static T[] SubArray<T>(T[] array, int start, int length)
         {
-
-            int length = 0;
-
-            foreach (byte[] arr in arrays)
-            {
-                length += arr.Length;
-            }
-
-            byte[] result = new byte[length];
-
-            int currentSize = 0;
-            foreach (byte[] arr in arrays)
-            {
-                arr.CopyTo(result, currentSize);
-                currentSize += arr.Length;
-            }
-
+            T[] result = new T[length];
+            Array.Copy(array, start, result, 0, length);
             return result;
         }
 
