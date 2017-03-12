@@ -9,8 +9,10 @@ namespace De.JanRoslan.NETUtils.Logging
         CRITICAL,
         ERROR,
         WARNING,
+        SUCCESS,
         INFO,
         DEBUG,
+        CONSOLE,
         NONE
     }
 }
