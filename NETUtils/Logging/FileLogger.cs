@@ -19,6 +19,8 @@ namespace De.JanRoslan.NETUtils.Logging
 
         private int maxRolling;
 
+        private object logLock;
+
 
         public FileLogger(String file) : this(file, -1) {
         }
@@ -26,7 +28,9 @@ namespace De.JanRoslan.NETUtils.Logging
         public FileLogger(String file, int maxRolling) {
             logLevels = null;
             this.file = file;
+            this.maxRolling = maxRolling;
             this.currentFile = file;
+            logLock = new object();
         }
 
 
@@ -46,8 +50,9 @@ namespace De.JanRoslan.NETUtils.Logging
                 headerBuild = "[" + header + "] ";
             }
 
-
-            System.IO.File.AppendAllText(file, headerBuild + ": [" + DateTime.Now.ToString("HH:mm:ss") + "] " + message + Environment.NewLine, Encoding.UTF8);
+            lock (logLock) {
+                System.IO.File.AppendAllText(file, "[" + DateTime.Now.ToString("HH: mm:ss") + "] : " + headerBuild + "\t" + message + Environment.NewLine, Encoding.UTF8);
+            }
         }
     }
 }

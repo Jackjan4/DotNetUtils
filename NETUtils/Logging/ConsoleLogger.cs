@@ -15,7 +15,7 @@ namespace De.JanRoslan.NETUtils.Logging
         }
 
         public void Init(params LogLevel[] level) {
-            
+            this.logLevels = level;
         }
 
 
@@ -29,7 +29,7 @@ namespace De.JanRoslan.NETUtils.Logging
             if (header != "") {
                 headerBuild = "[" + header + "] ";
             }
-            System.Console.WriteLine(headerBuild + ": [" + DateTime.Now.ToString("HH:mm:ss") + "] " + message, Encoding.UTF8);
+            System.Console.WriteLine("[" + DateTime.Now.ToString("HH:mm:ss") + "] : "  + headerBuild + "\t" + message, Encoding.UTF8);
         }
     }
 }
