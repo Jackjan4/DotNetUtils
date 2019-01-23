@@ -8,7 +8,10 @@ namespace De.JanRoslan.NETUtils.Logging
     public class LogEntry
     {
 
-
-
     }
+
+
+
+
+    
 }

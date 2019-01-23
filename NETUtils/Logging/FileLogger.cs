@@ -51,7 +51,13 @@ namespace De.JanRoslan.NETUtils.Logging
             }
 
             lock (logLock) {
-                System.IO.File.AppendAllText(file, "[" + DateTime.Now.ToString("HH: mm:ss") + "] : " + headerBuild + "\t" + message + Environment.NewLine, Encoding.UTF8);
+                try
+                {
+                    System.IO.File.AppendAllText(file, "[" + DateTime.Now.ToString("HH: mm:ss") + "] : " + headerBuild + "\t" + message + Environment.NewLine, System.Text.Encoding.UTF8);
+                } catch(Exception ex) {
+
+                }
+                
             }
         }
     }

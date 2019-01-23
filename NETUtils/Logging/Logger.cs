@@ -51,6 +51,11 @@ namespace De.JanRoslan.NETUtils.Logging
         }
 
 
+
+        /// <summary>
+        /// Builds a logger that can be configured to log on different outputs
+        /// Since there are many logger frameworks out there it is recommended to use this framework only when the target application is not able to use the standard logger inside .NET 4.7/Core 1.0
+        /// </summary>
         public class Builder
         {
 

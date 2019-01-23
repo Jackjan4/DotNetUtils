@@ -4,29 +4,22 @@ namespace De.JanRoslan.NETUtils.Collections
 {
     public static class ArrayUtils
     {
-       
 
-        public static T[] Concat<T>(params T[][] arrays)
-        {
 
-            int length = 0;
 
-            foreach (T[] arr in arrays)
-            {
-                length += arr.Length;
-            }
-
-            T[] result = new T[length];
-
-            return result;
-        }
-
+        /// <summary>
+        /// Creates a sub array out of an original array by setting start point and the offset
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="array"></param>
+        /// <param name="start"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
         public static T[] SubArray<T>(T[] array, int start, int length)
         {
             T[] result = new T[length];
             Array.Copy(array, start, result, 0, length);
             return result;
         }
-
     }
 }

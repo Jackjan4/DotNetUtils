@@ -29,7 +29,7 @@ namespace De.JanRoslan.NETUtils.Logging
             if (header != "") {
                 headerBuild = "[" + header + "] ";
             }
-            System.Console.WriteLine("[" + DateTime.Now.ToString("HH:mm:ss") + "] : "  + headerBuild + "\t" + message, Encoding.UTF8);
+            System.Console.WriteLine("[" + DateTime.Now.ToString("HH:mm:ss") + "] : "  + headerBuild + "\t" + message, System.Text.Encoding.UTF8);
         }
     }
 }
