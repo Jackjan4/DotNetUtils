@@ -53,7 +53,6 @@ namespace De.JanRoslan.NETUtils.Collections
         /// </summary>
         public ListedDictionary() {
             root = new Dictionary<K, V>();
-
             referenceTable = new List<K>();
 
         }
