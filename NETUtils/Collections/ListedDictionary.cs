@@ -38,8 +38,7 @@ namespace De.JanRoslan.NETUtils.Collections
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public V this[K key]
-        {
+        public V this[K key] {
             get => Get(key);
             set => Add(key, value);
         }
@@ -51,20 +50,23 @@ namespace De.JanRoslan.NETUtils.Collections
         /// <summary>
         /// Constructor, 
         /// </summary>
-        public ListedDictionary() {
+        public ListedDictionary()
+        {
             root = new Dictionary<K, V>();
             referenceTable = new List<K>();
 
         }
 
-        public void Add(K key, V value) {
+        public void Add(K key, V value)
+        {
             root[key] = value;
 
             referenceTable.Add(key);
         }
 
 
-        public V Get(int pos) {
+        public V Get(int pos)
+        {
             return root[referenceTable[pos]];
         }
 
@@ -74,9 +76,18 @@ namespace De.JanRoslan.NETUtils.Collections
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public V Get(K key) {
+        public V Get(K key)
+        {
             V result = default(V);
-            result = root[key];
+
+            if (root.ContainsKey(key))
+            {
+                result = root[key];
+            }
+            else
+            {
+                throw new KeyNotFoundException("The given key does not exist in the ListedDictionary");
+            }
 
             return result;
         }
@@ -86,7 +97,8 @@ namespace De.JanRoslan.NETUtils.Collections
         /// Returns the last element and then removes it
         /// </summary>
         /// <returns></returns>
-        public V DropLast() {
+        public V DropLast()
+        {
 
             K lastKey = referenceTable[referenceTable.Count - 1];
             referenceTable.RemoveAt(referenceTable.Count - 1);
@@ -96,27 +108,33 @@ namespace De.JanRoslan.NETUtils.Collections
 
         }
 
-        public void Remove(int pos) {
+        public void Remove(int pos)
+        {
 
         }
 
-        public bool ContainsKey(K key) {
+        public bool ContainsKey(K key)
+        {
             return root.ContainsKey(key);
         }
 
-        public bool Remove(K key) {
+        public bool Remove(K key)
+        {
             throw new NotImplementedException();
         }
 
-        public bool TryGetValue(K key, out V value) {
+        public bool TryGetValue(K key, out V value)
+        {
             throw new NotImplementedException();
         }
 
-        public void Add(KeyValuePair<K, V> item) {
+        public void Add(KeyValuePair<K, V> item)
+        {
             throw new NotImplementedException();
         }
 
-        public void Clear() {
+        public void Clear()
+        {
             throw new NotImplementedException();
         }
 
@@ -127,23 +145,28 @@ namespace De.JanRoslan.NETUtils.Collections
             return root.ContainsKey(item.Key) && root[item.Key].Equals(item.Value);
         }
 
-        public void CopyTo(KeyValuePair<K, V>[] array, int arrayIndex) {
+        public void CopyTo(KeyValuePair<K, V>[] array, int arrayIndex)
+        {
             throw new NotImplementedException();
         }
 
-        public bool Remove(KeyValuePair<K, V> item) {
+        public bool Remove(KeyValuePair<K, V> item)
+        {
             throw new NotImplementedException();
         }
 
-        public IEnumerator<KeyValuePair<K, V>> GetEnumerator() {
+        public IEnumerator<KeyValuePair<K, V>> GetEnumerator()
+        {
             return root.GetEnumerator();
         }
 
-        IEnumerator IEnumerable.GetEnumerator() {
+        IEnumerator IEnumerable.GetEnumerator()
+        {
             return root.GetEnumerator();
         }
 
-        IEnumerator<V> IEnumerable<V>.GetEnumerator() {
+        IEnumerator<V> IEnumerable<V>.GetEnumerator()
+        {
             return root.Values.GetEnumerator();
         }
     }
