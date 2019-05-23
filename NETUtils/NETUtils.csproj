@@ -11,6 +11,9 @@
     <NeutralLanguage>en</NeutralLanguage>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageProjectUrl>https://github.com/Jackjan4/NETUtils</PackageProjectUrl>
+    <PackageTags>C# Utilities Helper</PackageTags>
+    <RepositoryUrl>https://github.com/Jackjan4/NETUtils</RepositoryUrl>
+    <PackageLicenseUrl>https://github.com/Jackjan4/NETUtils/blob/master/NETUtils/License.txt</PackageLicenseUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
