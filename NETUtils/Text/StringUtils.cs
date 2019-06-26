@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace De.JanRoslan.NETUtils
+namespace De.JanRoslan.NETUtils.Text
 {
     public static class StringUtils
     {
@@ -13,9 +13,7 @@ namespace De.JanRoslan.NETUtils
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        public static string GetExtension(string s)
-        {
-
+        public static string GetExtension(string s) { 
             Match match = Regex.Match(new string(s.Reverse().ToArray()), @"[a-zA-Z0-9]+\.");
             return new string(match.Value.Reverse().ToArray());
         }

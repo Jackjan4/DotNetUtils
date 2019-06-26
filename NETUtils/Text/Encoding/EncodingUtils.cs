@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace De.JanRoslan.NETUtils.Encoding
+﻿namespace De.JanRoslan.NETUtils.Text.Encoding
 {
     public class EncodingUtils
     {
