@@ -4,11 +4,13 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>De.JanRoslan.NETUtils</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <Authors>Jan-Philipp Roslan</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/Jackjan4/NETUtils</PackageProjectUrl>
     <PackageTags>C# General Utility Utilities Helper</PackageTags>
+    <RepositoryUrl>https://github.com/Jackjan4/NETUtils</RepositoryUrl>
+    <Copyright>Licensed under MIT License</Copyright>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -16,10 +18,6 @@
     <DebugSymbols>false</DebugSymbols>
     <DefineConstants />
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Update="NETStandard.Library" Version="1.6.0" />
-  </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Profiling\" />

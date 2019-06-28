@@ -1,33 +1,37 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 
-namespace De.JanRoslan.NETUtils.Collections
-{
+namespace De.JanRoslan.NETUtils.Collections {
 
-    // TODO: More general implementations
-    public class ListedDictionary<K, V> : IDictionary<K, V>, IEnumerable<V>
-    {
+    /// <summary>
+    /// Represents a collection of key/value pairs that are accessible by the key or index.
+    /// .NET Framework (.NET Standard 2.0 also) contains a similar Dictionary (OrderedDictionary), however that one does not support generic types.
+    /// </summary>
+    /// <typeparam name="TKey"></typeparam>
+    /// <typeparam name="TValue"></typeparam>
+    public class ListedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, IEnumerable<TValue> {
         // Root dictionary
-        private Dictionary<K, V> root;
+        private readonly IDictionary<TKey, TValue> _rootDict;
 
 
         // List that connects every key to a number
-        private List<K> referenceTable;
+        private readonly IList<TKey> _referenceList;
 
 
         /// <summary>
         /// 
         /// </summary>
-        public ICollection<K> Keys => root.Keys;
+        public ICollection<TKey> Keys => _rootDict.Keys;
 
 
         /// <summary>
         /// 
         /// </summary>
-        public ICollection<V> Values => root.Values;
+        public ICollection<TValue> Values => _rootDict.Values;
 
-        public int Count => referenceTable.Count;
+        public int Count => _referenceList.Count;
 
         public bool IsReadOnly => false;
 
@@ -38,36 +42,36 @@ namespace De.JanRoslan.NETUtils.Collections
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public V this[K key] {
+        public TValue this[TKey key] {
             get => Get(key);
             set => Add(key, value);
         }
 
-        public V this[int pos] { get => Get(pos); }
+        public TValue this[int pos] => Get(pos);
 
 
 
         /// <summary>
-        /// Constructor, 
+        /// Constructor that generated an empty ListedDictionary
         /// </summary>
-        public ListedDictionary()
-        {
-            root = new Dictionary<K, V>();
-            referenceTable = new List<K>();
+        public ListedDictionary() {
+            _rootDict = new Dictionary<TKey, TValue>();
+            _referenceList = new List<TKey>();
 
         }
 
-        public void Add(K key, V value)
-        {
-            root[key] = value;
+        public void Add(TKey key, TValue value) {
+            // Throw, if key is already contained
+            if (_rootDict.ContainsKey(key)) {
 
-            referenceTable.Add(key);
+            }
+            _rootDict[key] = value;
+            _referenceList.Add(key);
         }
 
 
-        public V Get(int pos)
-        {
-            return root[referenceTable[pos]];
+        public TValue Get(int pos) {
+            return _rootDict[_referenceList[pos]];
         }
 
 
@@ -76,16 +80,12 @@ namespace De.JanRoslan.NETUtils.Collections
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public V Get(K key)
-        {
-            V result = default(V);
+        public TValue Get(TKey key) {
+            TValue result = default(TValue);
 
-            if (root.ContainsKey(key))
-            {
-                result = root[key];
-            }
-            else
-            {
+            if (_rootDict.ContainsKey(key)) {
+                result = _rootDict[key];
+            } else {
                 throw new KeyNotFoundException("The given key does not exist in the ListedDictionary");
             }
 
@@ -94,80 +94,90 @@ namespace De.JanRoslan.NETUtils.Collections
 
 
         /// <summary>
-        /// Returns the last element and then removes it
+        /// Removes and Returns the last element in the dictionary.
         /// </summary>
         /// <returns></returns>
-        public V DropLast()
-        {
+        public TValue PopLast() {
 
-            K lastKey = referenceTable[referenceTable.Count - 1];
-            referenceTable.RemoveAt(referenceTable.Count - 1);
-            V val = root[lastKey];
-            root.Remove(lastKey);
+            TKey lastKey = _referenceList[_referenceList.Count - 1];
+            _referenceList.RemoveAt(_referenceList.Count - 1);
+            TValue val = _rootDict[lastKey];
+            _rootDict.Remove(lastKey);
             return val;
 
         }
 
-        public void Remove(int pos)
-        {
+        public void Remove(int pos) {
+            // Index is out of bounds
+            if (pos > _referenceList.Count || pos < 0) {
+                throw new IndexOutOfRangeException("The given index is out of bounds");
+            }
 
+            TKey key = _referenceList[pos];
+            _rootDict.Remove(key);
+            _referenceList.RemoveAt(pos);
         }
 
-        public bool ContainsKey(K key)
-        {
-            return root.ContainsKey(key);
+        public bool ContainsKey(TKey key) {
+            return _rootDict.ContainsKey(key);
         }
 
-        public bool Remove(K key)
-        {
+        public bool Remove(TKey key) {
+            if (!_rootDict.ContainsKey(key)) {
+                throw new KeyNotFoundException("The given key does not exist in the ListedDictionary");
+            }
+
+            _referenceList.Remove(key);
+            _rootDict.Remove(key);
+
+            _rootDict.Remove(key);
+            return true;
+        }
+
+        public bool TryGetValue(TKey key, out TValue value) {
+            if (!_rootDict.ContainsKey(key)) {
+                value = default(TValue);
+
+                return false;
+            }
+
+            value = _rootDict[key];
+            return true;
+        }
+
+        public void Add(KeyValuePair<TKey, TValue> item) {
+            Add(item.Key, item.Value);
+        }
+
+        public void Clear() {
+            _referenceList.Clear();
+            _rootDict.Clear();
+        }
+
+
+
+        public bool Contains(KeyValuePair<TKey, TValue> item) {
+            return _rootDict.ContainsKey(item.Key) && _rootDict[item.Key].Equals(item.Value);
+        }
+
+        public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex) {
             throw new NotImplementedException();
         }
 
-        public bool TryGetValue(K key, out V value)
-        {
-            throw new NotImplementedException();
+        public bool Remove(KeyValuePair<TKey, TValue> item) {
+            return Remove(item.Key);
         }
 
-        public void Add(KeyValuePair<K, V> item)
-        {
-            throw new NotImplementedException();
+        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() {
+            return _rootDict.GetEnumerator();
         }
 
-        public void Clear()
-        {
-            throw new NotImplementedException();
+        IEnumerator IEnumerable.GetEnumerator() {
+            return _rootDict.GetEnumerator();
         }
 
-
-
-        public bool Contains(KeyValuePair<K, V> item)
-        {
-            return root.ContainsKey(item.Key) && root[item.Key].Equals(item.Value);
-        }
-
-        public void CopyTo(KeyValuePair<K, V>[] array, int arrayIndex)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool Remove(KeyValuePair<K, V> item)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerator<KeyValuePair<K, V>> GetEnumerator()
-        {
-            return root.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return root.GetEnumerator();
-        }
-
-        IEnumerator<V> IEnumerable<V>.GetEnumerator()
-        {
-            return root.Values.GetEnumerator();
+        IEnumerator<TValue> IEnumerable<TValue>.GetEnumerator() {
+            return _rootDict.Values.GetEnumerator();
         }
     }
 }
