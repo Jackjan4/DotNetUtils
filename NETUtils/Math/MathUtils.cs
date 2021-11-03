@@ -78,13 +78,11 @@ namespace De.JanRoslan.NETUtils.Math {
          * @return
          */
         public static Tuple<int, int> EqualSquare(int count) {
-            Tuple<int, int> result;
-
             if (count == 0) {
                 return new Tuple<int, int>(0, 0);
             }
 
-            List<Tuple<int, int>> parts = new List<Tuple<int, int>>();
+            var parts = new List<Tuple<int, int>>();
 
             // Get all division pairs
             for (int i = 1; i <= System.Math.Ceiling(count / 2.0); i++) {
@@ -96,7 +94,7 @@ namespace De.JanRoslan.NETUtils.Math {
 
 
             // Get pair with smallest distance
-            result = parts[0];
+            var result = parts[0];
             foreach (Tuple<int, int> tup in parts) {
                 if (System.Math.Abs(tup.Item1 - tup.Item2) < System.Math.Abs(result.Item1 - result.Item2)) {
                     result = tup;

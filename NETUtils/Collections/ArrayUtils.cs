@@ -17,7 +17,7 @@ namespace De.JanRoslan.NETUtils.Collections
         /// <returns></returns>
         public static T[] SubArray<T>(T[] array, int start, int length)
         {
-            T[] result = new T[length];
+            var result = new T[length];
             Array.Copy(array, start, result, 0, length);
             return result;
         }
