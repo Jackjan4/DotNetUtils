@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <RootNamespace>De.JanRoslan.NETUtils</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.3</Version>
+    <Version>1.0.4</Version>
     <Authors>Jackjan4</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/Jackjan4/NETUtils</PackageProjectUrl>
@@ -13,9 +13,9 @@
     <Copyright>Licensed under MIT License</Copyright>
     <Company>ROSLAN</Company>
     <NeutralLanguage>en</NeutralLanguage>
-    <PackageReleaseNotes>Removed SortedDictionary</PackageReleaseNotes>
-    <AssemblyVersion>1.0.3.0</AssemblyVersion>
-    <FileVersion>1.0.3.0</FileVersion>
+    <PackageReleaseNotes>Re-added ListedDictionary</PackageReleaseNotes>
+    <AssemblyVersion>1.0.4.0</AssemblyVersion>
+    <FileVersion>1.0.4.0</FileVersion>
     <Description>Utilities for .NET applications</Description>
   </PropertyGroup>
 
