@@ -1,9 +1,12 @@
 ﻿using System;
 
-namespace De.JanRoslan.NETUtils.Collections
-{
-    public static class ArrayUtils
-    {
+
+
+namespace De.JanRoslan.NETUtils.Collections {
+
+
+
+    public static class ArrayUtils {
 
 
 
@@ -15,8 +18,7 @@ namespace De.JanRoslan.NETUtils.Collections
         /// <param name="start"></param>
         /// <param name="length"></param>
         /// <returns></returns>
-        public static T[] SubArray<T>(T[] array, int start, int length)
-        {
+        public static T[] SubArray<T>(T[] array, int start, int length) {
             var result = new T[length];
             Array.Copy(array, start, result, 0, length);
             return result;

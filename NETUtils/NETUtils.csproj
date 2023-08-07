@@ -4,8 +4,8 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <RootNamespace>De.JanRoslan.NETUtils</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.4</Version>
-    <Authors>Jackjan4</Authors>
+    <Version>1.1.0</Version>
+    <Authors>Jan Roslan</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/Jackjan4/NETUtils</PackageProjectUrl>
     <PackageTags>C# General Utility Utilities Helper</PackageTags>
@@ -14,8 +14,8 @@
     <Company>ROSLAN</Company>
     <NeutralLanguage>en</NeutralLanguage>
     <PackageReleaseNotes>Re-added ListedDictionary</PackageReleaseNotes>
-    <AssemblyVersion>1.0.4.0</AssemblyVersion>
-    <FileVersion>1.0.4.0</FileVersion>
+    <AssemblyVersion>1.1.0</AssemblyVersion>
+    <FileVersion>1.1.0</FileVersion>
     <Description>Utilities for .NET applications</Description>
   </PropertyGroup>
 
