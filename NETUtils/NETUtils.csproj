@@ -25,6 +25,10 @@
     <DefineConstants />
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
   <ItemGroup>
     <Folder Include="Profiling\" />
   </ItemGroup>

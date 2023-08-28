@@ -15,13 +15,12 @@ namespace De.JanRoslan.NETUtils.Net {
         /// Returns the local IPv4 address as string.
         /// (The method is taken from Bibliothek.dll from Brandgroup (Volker Niemeyer), cleaned up and converted to C#)
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Returns the first local Ipv4 address that is found</returns>
         public static string GetLocalIpv4() {
             string result = null;
+            List<string> ipAddresses = new List<string>();
 
             // Accessing network can cause exceptions. Caller of this method has to handle them.
-
-            List<string> ipAddresses = new List<string>();
 
             int i = 0;
             foreach (IPAddress ipAddr in Dns.GetHostAddresses(Dns.GetHostName())) {
@@ -39,6 +38,7 @@ namespace De.JanRoslan.NETUtils.Net {
         }
 
 
+
         /// <summary>
         /// Enumerates all network interfaces and gets their unicast addresses
         /// (The method is taken from Bibliothek.dll from Brandgroup (Volker Niemeyer), cleaned up and converted to C#)
@@ -48,6 +48,8 @@ namespace De.JanRoslan.NETUtils.Net {
         public static List<string> GetAllIpAddresses(out string localIp) {
             localIp = null;
             List<string> result = new List<string>();
+
+            // Accessing network can cause exceptions. Caller of this method has to handle them.
 
             foreach (NetworkInterface netInterface in NetworkInterface.GetAllNetworkInterfaces()) {
                 if (netInterface.OperationalStatus == OperationalStatus.Up && netInterface.NetworkInterfaceType != NetworkInterfaceType.Loopback) {
