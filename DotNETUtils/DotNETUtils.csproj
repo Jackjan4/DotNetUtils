@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <RootNamespace>Roslan.DotNETUtils</RootNamespace>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.2.0</Version>
+    <Authors>Jan-Philipp Roslan</Authors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/Jackjan4/NETUtils</PackageProjectUrl>
+    <PackageTags>C# General Utility Utilities Helper</PackageTags>
+    <RepositoryUrl>https://github.com/Jackjan4/NETUtils</RepositoryUrl>
+    <Copyright>Licensed under MIT License</Copyright>
+    <Company>ROSLAN</Company>
+    <NeutralLanguage>en</NeutralLanguage>
+    <PackageReleaseNotes>Changed project name &amp; local IP functions</PackageReleaseNotes>
+    <AssemblyVersion>1.2.0</AssemblyVersion>
+    <FileVersion>1.2.0</FileVersion>
+    <Description>Utilities for .NET applications</Description>
+    <Title>DotNETUtils</Title>
+    <RepositoryType>git</RepositoryType>
+    <PackageId>Roslan.$(AssemblyName)</PackageId>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <DefineConstants />
+    <Optimize>True</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Profiling\" />
+  </ItemGroup>
+
+</Project>
