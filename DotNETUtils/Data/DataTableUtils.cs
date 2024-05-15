@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using static System.Net.Mime.MediaTypeNames;
@@ -89,14 +90,14 @@ namespace Roslan.DotNETUtils.Data {
             for (int i = 0; i < table.Columns.Count; i++) {
                 strZeile.Append(separator + table.Columns[i].ToString());
             }
-            writer.WriteLine(strZeile.ToString()[2..]);
+            writer.WriteLine(strZeile.ToString().Substring(2));
 
             foreach (DataRow drZeile in drZeilen) {
                 StringBuilder striZeile = new StringBuilder();              // Textobjekt
                 for (int i = 0; i < table.Columns.Count; i++) {
                     striZeile.Append(separator + drZeile[i].ToString());
                 }
-                writer.WriteLine(striZeile.ToString()[2..]);
+                writer.WriteLine(striZeile.ToString().Substring(2));
             }
 
             writer.Flush();
@@ -109,20 +110,20 @@ namespace Roslan.DotNETUtils.Data {
 
 
         /// <summary>
-        /// Erstellt einen DataTable aus einer CSV-Datei (Trennzeichen Semikolon ; ).
+        /// Erstellt einen DataTable aus einer CSV-Datei (Standard Trennzeichen Komma , ).
         /// Rückgabewert: Datatable mit dem Inhalt der CSV-Datei.
         /// (The method is taken from Bibliothek.dll from Brandgroup (Volker Niemeyer), cleaned up and converted to C#)
         /// </summary>
         /// <returns></returns>
-        public static DataTable ConvertCSVToDataTable(string strCsv, string separator = ",") {
+        public static DataTable ConvertCsvToDataTable(string strCsv, string separator = ",") {
             DataTable result = new DataTable();
-            string[] lines = strCsv.Split("\r\n");
+            string[] lines = strCsv.Split(new[] { "\r\n" }, StringSplitOptions.None);
 
             if (lines.Length < 1) {
                 return null; // TODO: Exception?
             }
 
-            string[] colNames = lines[0].Split(separator);
+            string[] colNames = lines[0].Split(new[] { separator }, StringSplitOptions.None);
             int countCol = colNames.Length;
             
             // Create Columns in DataTable
@@ -130,8 +131,8 @@ namespace Roslan.DotNETUtils.Data {
                 result.Columns.Add(colName);
             }
 
-            foreach(string strRow in lines[1..]) {
-                string[] rowValues = strRow.Split(separator);
+            foreach(string strRow in lines.Skip(1)) {
+                string[] rowValues = strRow.Split(new[] { separator }, StringSplitOptions.None);
 
                 DataRow newRow = result.NewRow();
                 for (int i = 0; i < countCol; i++) {

@@ -1,22 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <RootNamespace>Roslan.DotNETUtils</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.2.0</Version>
+    <Version>1.4</Version>
     <Authors>Jan-Philipp Roslan</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/Jackjan4/NETUtils</PackageProjectUrl>
     <PackageTags>C# General Utility Utilities Helper</PackageTags>
     <RepositoryUrl>https://github.com/Jackjan4/NETUtils</RepositoryUrl>
     <Copyright>Licensed under MIT License</Copyright>
-    <Company>ROSLAN</Company>
+    <Company>ROSLAN Additive Solutions</Company>
     <NeutralLanguage>en</NeutralLanguage>
-    <PackageReleaseNotes>Changed project name &amp; local IP functions</PackageReleaseNotes>
-    <AssemblyVersion>1.2.0</AssemblyVersion>
-    <FileVersion>1.2.0</FileVersion>
-    <Description>Utilities for .NET applications</Description>
+    <PackageReleaseNotes>Removed Sha256 utils because .NET 5 now already has them</PackageReleaseNotes>
+    <AssemblyVersion>1.4.0</AssemblyVersion>
+    <FileVersion>1.4.0</FileVersion>
+    <Description>Common utilities for .NET applications</Description>
     <Title>DotNETUtils</Title>
     <RepositoryType>git</RepositoryType>
     <PackageId>Roslan.$(AssemblyName)</PackageId>
@@ -27,10 +27,14 @@
     <DebugSymbols>false</DebugSymbols>
     <DefineConstants />
     <Optimize>True</Optimize>
+    <IsTrimmable>True</IsTrimmable>
+    <IsAotCompatible>True</IsAotCompatible>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DebugType>portable</DebugType>
+    <IsTrimmable>True</IsTrimmable>
+    <IsAotCompatible>True</IsAotCompatible>
   </PropertyGroup>
 
   <ItemGroup>

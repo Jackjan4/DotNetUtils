@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
 
 namespace Roslan.DotNETUtils.Crypto
@@ -14,28 +12,9 @@ namespace Roslan.DotNETUtils.Crypto
         }
 
 
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="randomString"></param>
-        /// <returns></returns>
-        public static string Sha256(string str) {
-            byte[] res = Sha256(System.Text.Encoding.UTF8.GetBytes(str));
-            return Encoding.UTF8.GetString(res);
-        }
-
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="bytes"></param>
-        /// <returns></returns>
-        public static byte[] Sha256(byte[] bytes) {
-            SHA256 alg = SHA256.Create();
-            byte[] result = alg.ComputeHash(bytes);
-            return result;
-        }
+        /// === Removal of Sha256(...) methods === 
+        /// Since .NET 5 there is now a static function inside the most common hash function classes that enable easy use so our library functions are not needed anymore
+        /// https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1850
+        /// CA1850
     }
 }
