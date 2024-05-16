@@ -21,9 +21,9 @@ namespace Roslan.DotNETUtils.Text {
 
             }
 
-            byte[] result = new byte[hexStr.Length / 2];
+            var result = new byte[hexStr.Length / 2];
 
-            for (int i = 0; i < hexStr.Length / 2; i++) {
+            for (var i = 0; i < hexStr.Length / 2; i++) {
                 result[i] = Convert.ToByte(hexStr.Substring(i * 2, 2), 16);
             }
             return result;
