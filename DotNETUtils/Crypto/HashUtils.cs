@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Reflection.Metadata.Ecma335;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -21,7 +23,7 @@ public class HashUtils {
     /// <returns>The computed SHA256 hash as a hexadecimal converted string.</returns>
     public static string Sha256(string str, Encoding encoding) {
         var hashBytes = SHA256.HashData(encoding.GetBytes(str));
-        return BitConverter.ToString(hashBytes);
+        return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
     }
 
 
@@ -45,7 +47,7 @@ public class HashUtils {
     /// <returns>The computed MD5 hash as a hexadecimal converted string.</returns>
     public static string Md5(string str, Encoding encoding) {
         var hashBytes = MD5.HashData(encoding.GetBytes(str));
-        return BitConverter.ToString(hashBytes);
+        return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
     }
 
 
@@ -57,5 +59,32 @@ public class HashUtils {
     /// <returns>The computed MD5 hash as a hexadecimal converted string.</returns>
     public static string Md5(string str) {
         return Md5(str, Encoding.UTF8);
+    }
+
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    public static string Md5File(string path) {
+        using var fs = new FileStream(path, FileMode.Open);
+        return BitConverter.ToString(MD5.HashData(fs)).Replace("-", "").ToLower();
+    }
+
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="path1"></param>
+    /// <param name="path2"></param>
+    /// <returns></returns>
+    public static bool CompareMd5FileHashes(string path1, string path2) {
+        var result1 = Md5File(path1);
+        var result2 = Md5File(path2);
+
+        return string.Equals(result1, result2, StringComparison.OrdinalIgnoreCase);
     }
 }
