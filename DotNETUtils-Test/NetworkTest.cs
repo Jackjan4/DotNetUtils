@@ -1,5 +1,3 @@
-
-
 namespace NETUtils_Test {
     [TestClass]
     public class NetworkTest {
@@ -10,10 +8,6 @@ namespace NETUtils_Test {
 
             Trace.Listeners.Add(new TextWriterTraceListener(Console.Out));
 
-            string test = NetworkUtils.GetLocalIpv4();
-            
-            Trace.WriteLine(test);
-            Debug.WriteLine(test);
         }
 
         [TestMethod]
@@ -22,7 +16,7 @@ namespace NETUtils_Test {
             Trace.Listeners.Add(new TextWriterTraceListener(Console.Out));
 
             string ip1;
-            List<string> test = NetworkUtils.GetAllIpAddresses(out ip1);
+            List<string> test = NetworkUtils.GetAllIpAddresses();
 
             Trace.WriteLine(test);
             Debug.WriteLine(test);
