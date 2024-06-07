@@ -84,7 +84,7 @@ public class HashUtils {
     /// <param name="bufferSize"></param>
     /// <returns></returns>
     public static async Task<string> Md5FileAsync(string path, int bufferSize = 4096) {
-        await using var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize,useAsync: true);
+        await using var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan);
 
         var hashData = await MD5.HashDataAsync(fs);
 
@@ -117,9 +117,11 @@ public class HashUtils {
     /// <param name="bufferSize"></param>
     /// <returns></returns>
     public static async Task<bool> CompareMd5FileHashesAsync(string path1, string path2, int bufferSize = 4096) {
-        var result1 = await Md5FileAsync(path1, bufferSize);
-        var result2 = await Md5FileAsync(path2, bufferSize);
+        var task1 = Md5FileAsync(path1, bufferSize);
+        var task2 = Md5FileAsync(path2, bufferSize);
 
-        return string.Equals(result1, result2, StringComparison.OrdinalIgnoreCase);
+        await Task.WhenAll(task1, task2);
+
+        return string.Equals(task1.Result, task2.Result, StringComparison.OrdinalIgnoreCase);
     }
 }
