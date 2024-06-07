@@ -3,6 +3,7 @@ using System.IO;
 using System.Reflection.Metadata.Ecma335;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Roslan.DotNETUtils.Crypto;
 public class HashUtils {
@@ -79,6 +80,22 @@ public class HashUtils {
     /// <summary>
     /// 
     /// </summary>
+    /// <param name="path"></param>
+    /// <param name="bufferSize"></param>
+    /// <returns></returns>
+    public static async Task<string> Md5FileAsync(string path, int bufferSize = 4096) {
+        await using var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize,useAsync: true);
+
+        var hashData = await MD5.HashDataAsync(fs);
+
+        return BitConverter.ToString(hashData).Replace("-", "").ToLower();
+    }
+
+
+
+    /// <summary>
+    /// 
+    /// </summary>
     /// <param name="path1"></param>
     /// <param name="path2"></param>
     /// <param name="bufferSize"></param>
@@ -86,6 +103,22 @@ public class HashUtils {
     public static bool CompareMd5FileHashes(string path1, string path2, int bufferSize = 4096) {
         var result1 = Md5File(path1, bufferSize);
         var result2 = Md5File(path2, bufferSize);
+
+        return string.Equals(result1, result2, StringComparison.OrdinalIgnoreCase);
+    }
+
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="path1"></param>
+    /// <param name="path2"></param>
+    /// <param name="bufferSize"></param>
+    /// <returns></returns>
+    public static async Task<bool> CompareMd5FileHashesAsync(string path1, string path2, int bufferSize = 4096) {
+        var result1 = await Md5FileAsync(path1, bufferSize);
+        var result2 = await Md5FileAsync(path2, bufferSize);
 
         return string.Equals(result1, result2, StringComparison.OrdinalIgnoreCase);
     }
