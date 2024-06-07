@@ -67,9 +67,10 @@ public class HashUtils {
     /// 
     /// </summary>
     /// <param name="path"></param>
+    /// <param name="bufferSize"></param>
     /// <returns></returns>
-    public static string Md5File(string path) {
-        using var fs = new FileStream(path, FileMode.Open);
+    public static string Md5File(string path, int bufferSize = 4096) {
+        using var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize);
         return BitConverter.ToString(MD5.HashData(fs)).Replace("-", "").ToLower();
     }
 
@@ -80,10 +81,11 @@ public class HashUtils {
     /// </summary>
     /// <param name="path1"></param>
     /// <param name="path2"></param>
+    /// <param name="bufferSize"></param>
     /// <returns></returns>
-    public static bool CompareMd5FileHashes(string path1, string path2) {
-        var result1 = Md5File(path1);
-        var result2 = Md5File(path2);
+    public static bool CompareMd5FileHashes(string path1, string path2, int bufferSize = 4096) {
+        var result1 = Md5File(path1, bufferSize);
+        var result2 = Md5File(path2, bufferSize);
 
         return string.Equals(result1, result2, StringComparison.OrdinalIgnoreCase);
     }
