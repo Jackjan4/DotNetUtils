@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace Roslan.DotNETUtils.Text {
     public static class StringUtils {
 
 
+
         /// There was a method GetExtension(...) here which returned the file extension of a string that represents a file path.
-        /// That method is not needed anymore because Path.GetExtension(...) exists in the framework.
+        /// That method is not needed anymore because Path.GetExtension(...) exists in .NET since .NET Framework 1.1 (lol).
+
 
 
         /// <summary>

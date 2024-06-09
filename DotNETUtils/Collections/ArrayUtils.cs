@@ -10,18 +10,12 @@ namespace Roslan.DotNETUtils.Collections {
 
 
 
-        /// <summary>
-        /// Creates a sub array out of an original array by setting start point and the offset
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="array"></param>
-        /// <param name="start"></param>
-        /// <param name="length"></param>
-        /// <returns></returns>
-        public static T[] SubArray<T>(T[] array, int start, int length) {
-            var result = new T[length];
-            Array.Copy(array, start, result, 0, length);
-            return result;
-        }
+        /// There were functions called Concat(...) here which concatenated multiple arrays into one.
+        /// There were removed because .NET has LINQs .Concat()
+
+
+
+        /// There was a function called SubArray(...) here which returned a subarray of an array.
+        /// It was removed because it just called Array.Copy(...) in a one-liner.
     }
 }

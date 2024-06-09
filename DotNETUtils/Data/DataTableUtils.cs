@@ -23,7 +23,7 @@ namespace Roslan.DotNETUtils.Data {
         /// <param name="field">Feldname, dessen Inhalt zurückgeliefert werden soll</param>
         public static object FilterDataTable(DataTable table, string filter, string sorting, string field) {
             object result = null; // Rückgabewert
-            DataView dvDatensicht = new DataView(table); // Datensichtobjekt
+            var dvDatensicht = new DataView(table); // Datensichtobjekt
 
             // Filter an Dataview übergeben
             dvDatensicht.RowFilter = filter;

@@ -1,127 +1,213 @@
 ﻿using System;
 using System.IO;
-using System.Reflection.Metadata.Ecma335;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Roslan.DotNETUtils.Crypto;
-public class HashUtils {
-
-
-
-    private HashUtils() {
-
-    }
+namespace Roslan.DotNETUtils.Crypto {
 
 
 
     /// <summary>
-    /// Computes the SHA256 hash of the specified string using the specified encoding.
+    /// Provides utility functions for hashing strings and streams with typically used hashing algorithms in a one-shot manner.
     /// </summary>
-    /// <param name="str">The string to compute the hash for.</param>
-    /// <param name="encoding">The encoding to use for the string.</param>
-    /// <returns>The computed SHA256 hash as a hexadecimal converted string.</returns>
-    public static string Sha256(string str, Encoding encoding) {
-        var hashBytes = SHA256.HashData(encoding.GetBytes(str));
-        return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
-    }
+    public class HashUtils {
 
 
 
-    /// <summary>
-    /// Computes the SHA256 hash of the specified string using UTF8 encoding.
-    /// </summary>
-    /// <param name="str">The string to compute the hash for.</param>
-    /// <returns>The computed SHA256 hash as a hexadecimal converted string.</returns>
-    public static string Sha256(string str) {
-        return Sha256(str, Encoding.UTF8);
-    }
+        /// <summary>
+        /// Keep constructor private to prevent instantiation.
+        /// </summary>
+        private HashUtils() {
+
+        }
 
 
 
-    /// <summary>
-    /// Computes the MD5 hash of the specified string using the specified encoding.
-    /// </summary>
-    /// <param name="str">The string to compute the hash for.</param>
-    /// <param name="encoding">The encoding to use for the string.</param>
-    /// <returns>The computed MD5 hash as a hexadecimal converted string.</returns>
-    public static string Md5(string str, Encoding encoding) {
-        var hashBytes = MD5.HashData(encoding.GetBytes(str));
-        return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
-    }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static byte[] Sha256(string str) {
+            return Sha256(str, Encoding.UTF8);
+        }
 
 
 
-    /// <summary>
-    /// Computes the MD5 hash of the specified string using UTF8 encoding.
-    /// </summary>
-    /// <param name="str">The string to compute the hash for.</param>
-    /// <returns>The computed MD5 hash as a hexadecimal converted string.</returns>
-    public static string Md5(string str) {
-        return Md5(str, Encoding.UTF8);
-    }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="encoding"></param>
+        /// <returns></returns>
+        public static byte[] Sha256(string str, Encoding encoding) {
+#if NETSTANDARD2_0
+            using (SHA256 sha256 = SHA256.Create()) {
+                return sha256.ComputeHash(encoding.GetBytes(str));
+            }
+#elif NET8_0_OR_GREATER
+            return SHA256.HashData(encoding.GetBytes(str));
+#endif
+        }
 
 
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="path"></param>
-    /// <param name="bufferSize"></param>
-    /// <returns></returns>
-    public static string Md5File(string path, int bufferSize = 4096) {
-        using var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize);
-        return BitConverter.ToString(MD5.HashData(fs)).Replace("-", "").ToLower();
-    }
+        /// Create a SHA256 hash from a stream
+        public static byte[] Sha256(Stream stream) {
+#if NETSTANDARD2_0
+            using (SHA256 sha256 = SHA256.Create()) {
+                return sha256.ComputeHash(stream);
+            }
+#elif NET8_0_OR_GREATER
+            return SHA256.HashData(stream);
+#endif
+        }
 
 
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="path"></param>
-    /// <param name="bufferSize"></param>
-    /// <returns></returns>
-    public static async Task<string> Md5FileAsync(string path, int bufferSize = 4096) {
-        await using var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan);
-
-        var hashData = await MD5.HashDataAsync(fs);
-
-        return BitConverter.ToString(hashData).Replace("-", "").ToLower();
-    }
+        /// <summary>
+        /// Computes the SHA256 hash of the specified string using UTF8 encoding.
+        /// </summary>
+        /// <param name="str">The string to compute the hash for.</param>
+        /// <returns>The computed SHA256 hash as a hexadecimal converted string.</returns>
+        public static string Sha256String(string str) {
+            return Sha256String(str, Encoding.UTF8);
+        }
 
 
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="path1"></param>
-    /// <param name="path2"></param>
-    /// <param name="bufferSize"></param>
-    /// <returns></returns>
-    public static bool CompareMd5FileHashes(string path1, string path2, int bufferSize = 4096) {
-        var result1 = Md5File(path1, bufferSize);
-        var result2 = Md5File(path2, bufferSize);
-
-        return string.Equals(result1, result2, StringComparison.OrdinalIgnoreCase);
-    }
+        /// <summary>
+        /// Computes the SHA256 hash of the specified string using the specified encoding.
+        /// </summary>
+        /// <param name="str">The string to compute the hash for.</param>
+        /// <param name="encoding">The encoding to use for the string.</param>
+        /// <returns>The computed SHA256 hash as a hexadecimal converted string.</returns>
+        public static string Sha256String(string str, Encoding encoding) {
+            byte[] hashBytes = Sha256(str, encoding);
+            return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+        }
 
 
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="path1"></param>
-    /// <param name="path2"></param>
-    /// <param name="bufferSize"></param>
-    /// <returns></returns>
-    public static async Task<bool> CompareMd5FileHashesAsync(string path1, string path2, int bufferSize = 4096) {
-        var task1 = Md5FileAsync(path1, bufferSize);
-        var task2 = Md5FileAsync(path2, bufferSize);
+        /// <summary>
+        /// Computes the MD5 hash of the specified string using the specified encoding.
+        /// </summary>
+        /// <param name="stream">The string to compute the hash for.</param>
+        /// <returns>The computed MD5 hash as a hexadecimal converted string.</returns>
+        public static string Sha256String(Stream stream) {
+            byte[] hashBytes = Sha256(stream);
+            return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+        }
 
-        await Task.WhenAll(task1, task2);
 
-        return string.Equals(task1.Result, task2.Result, StringComparison.OrdinalIgnoreCase);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static byte[] Md5(string str) {
+            return Md5(str, Encoding.UTF8);
+        }
+
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="encoding"></param>
+        /// <returns></returns>
+        public static byte[] Md5(string str, Encoding encoding) {
+#if NETSTANDARD2_0
+            using (MD5 md5 = MD5.Create()) {
+                return md5.ComputeHash(encoding.GetBytes(str));
+            }
+#elif NET8_0_OR_GREATER
+            return MD5.HashData(encoding.GetBytes(str));
+#endif
+        }
+
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <returns></returns>
+        public static byte[] Md5(Stream stream) {
+#if NETSTANDARD2_0
+            using (MD5 md5 = MD5.Create()) {
+                return md5.ComputeHash(stream);
+            }
+#elif NET8_0_OR_GREATER
+            return MD5.HashData(stream);
+#endif
+        }
+
+
+
+#if NET8_0_OR_GREATER
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <returns></returns>
+        public static async Task<byte[]> Md5Async(Stream stream) {
+            return await MD5.HashDataAsync(stream);
+        }
+#endif
+
+
+
+        /// <summary>
+        /// Computes the MD5 hash of the specified string using UTF8 encoding.
+        /// </summary>
+        /// <param name="str">The string to compute the hash for.</param>
+        /// <returns>The computed MD5 hash as a hexadecimal converted string.</returns>
+        public static string Md5String(string str) {
+            return Md5String(str, Encoding.UTF8);
+        }
+
+
+
+        /// <summary>
+        /// Computes the MD5 hash of the specified string using the specified encoding.
+        /// </summary>
+        /// <param name="str">The string to compute the hash for.</param>
+        /// <param name="encoding">The encoding to use for the string.</param>
+        /// <returns>The computed MD5 hash as a hexadecimal converted string.</returns>
+        public static string Md5String(string str, Encoding encoding) {
+            byte[] hashBytes = Md5(str, encoding);
+            return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+        }
+
+
+
+        /// <summary>
+        /// Computes the MD5 hash of the specified string using the specified encoding.
+        /// </summary>
+        /// <param name="stream">The string to compute the hash for.</param>
+        /// <returns>The computed MD5 hash as a hexadecimal converted string.</returns>
+        public static string Md5String(Stream stream) {
+            byte[] hashBytes = Md5(stream);
+            return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+        }
+
+
+
+
+#if NET8_0_OR_GREATER
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <returns></returns>
+        public static async Task<string> Md5StringAsync(Stream stream) {
+            byte[] hashBytes = await MD5.HashDataAsync(stream);
+            return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+        }
+#endif
     }
 }
