@@ -1,5 +1,5 @@
 using Roslan.DotNETUtils.Crypto;
-using Roslan.DotNETUtils.Files;
+using Roslan.DotNetUtils.IO;
 using Xunit.Abstractions;
 
 namespace DotNetUtils.TestNet8._0 {

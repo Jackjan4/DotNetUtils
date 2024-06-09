@@ -97,15 +97,15 @@ namespace Roslan.DotNETUtils.Crypto {
         /// <param name="key"></param>
         /// <returns></returns>
         private static byte[] GetKey(string key, int wishedLength) {
-
             // Convert string to byte-Array
-            byte[] byteKey = System.Text.Encoding.UTF8.GetBytes(key);
+            byte[] byteKey = Encoding.UTF8.GetBytes(key);
 
-            if (byteKey.Length >= wishedLength) {
-                return ArrayUtils.SubArray<byte>(byteKey, 0, wishedLength);
-            } else {
+            if (byteKey.Length < wishedLength) 
                 return null;
-            }
+
+            var resultArray = new byte[wishedLength];
+            Array.Copy(byteKey, resultArray, wishedLength);
+            return resultArray;
         }
 
 
