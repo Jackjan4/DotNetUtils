@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net.NetworkInformation;
+using System.Threading.Tasks;
 
 namespace Roslan.DotNetUtils.Net {
     public static class NetworkUtils {
@@ -27,6 +29,41 @@ namespace Roslan.DotNetUtils.Net {
                 }
             }
             return result;
+        }
+
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="hostNameOrIpAddress"></param>
+        /// <returns></returns>
+        /// <exception cref="System.ArgumentNullException">Test</exception>
+        public static bool Ping(string hostNameOrIpAddress) {
+            var ping = new Ping();
+            var pingOptions = new PingOptions {
+                DontFragment = true
+            };
+
+            var result = ping.Send(hostNameOrIpAddress);
+            return result.Status == IPStatus.Success;
+        }
+
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="hostNameOrIpAddress"></param>
+        /// <returns></returns>
+        public static async Task<bool> PingAsync(string hostNameOrIpAddress) {
+            var ping = new Ping();
+            var pingOptions = new PingOptions {
+                DontFragment = true
+            };
+
+            var result = await ping.SendPingAsync(hostNameOrIpAddress);
+            return result.Status == IPStatus.Success;
         }
     }
 }
