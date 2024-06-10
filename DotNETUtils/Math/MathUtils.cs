@@ -2,28 +2,22 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Roslan.DotNETUtils.Math {
+namespace Roslan.DotNetUtils.Math {
     public static class MathUtils {
 
 
         public static bool IsPrime(int number) {
 
-            if (number == 1) {
+            if (number == 1)
                 return false;
-            }
-
-            // 
-            if (number == 2) {
-                return true;
-            }
-
+            
             // If the number is even, it is not prime
             if (number % 2 == 0) {
                 return false;
             }
 
             // Check every odd number till the sqrt of the number
-            for (int i = 3; i * i <= number; i += 2) {
+            for (var i = 3; i * i <= number; i += 2) {
                 if (number % i == 0) {
                     return false;
                 }

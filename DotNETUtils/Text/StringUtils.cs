@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Roslan.DotNETUtils.Text {
+namespace Roslan.DotNetUtils.Text {
     public static class StringUtils {
 
 

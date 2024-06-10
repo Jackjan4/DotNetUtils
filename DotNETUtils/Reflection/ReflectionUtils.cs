@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 
-namespace Roslan.DotNETUtils.Reflection {
+namespace Roslan.DotNetUtils.Reflection {
 
 
     /// <summary>
     /// Utility methods regarding Reflection
     /// </summary>
-    public class ReflectionUtils {
+    public static class ReflectionUtils {
 
 
         /// <summary>
@@ -20,7 +20,6 @@ namespace Roslan.DotNETUtils.Reflection {
         /// <param name="value">The new value for the property</param>
         /// <param name="parent"></param>
         public static void SetInternalProperty(object instance, string propName, object value, string parent = null) {
-
             PropertyInfo propInfo;
             if(parent != null) {
                 propInfo = instance.GetType().GetRuntimeProperty(parent);

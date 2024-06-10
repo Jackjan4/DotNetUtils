@@ -10,7 +10,7 @@ using System.Text;
 using static System.Net.Mime.MediaTypeNames;
 using static System.Net.WebRequestMethods;
 
-namespace Roslan.DotNETUtils.Data {
+namespace Roslan.DotNetUtils.Data {
     public static class DataTableUtils {
 
 
@@ -18,28 +18,21 @@ namespace Roslan.DotNETUtils.Data {
         /// Filter DataTable and return the content of the first found field
         /// (The method is taken from Bibliothek.dll from Brandgroup (Volker Niemeyer), cleaned up and converted to C#)
         ///
-        /// <param name="table">zu durchsuchende Tabelle</param>
+        /// <param name="table">The DataTable to be filtered</param>
         /// <param name="filter">gesuchte Einträge</param>
         /// <param name="field">Feldname, dessen Inhalt zurückgeliefert werden soll</param>
         public static object FilterDataTable(DataTable table, string filter, string sorting, string field) {
-            object result = null; // Rückgabewert
-            var dvDatensicht = new DataView(table); // Datensichtobjekt
+            var dataView = new DataView(table);
 
             // Filter an Dataview übergeben
-            dvDatensicht.RowFilter = filter;
-            dvDatensicht.Sort = sorting;
+            dataView.RowFilter = filter;
+            dataView.Sort = sorting;
 
-            // Datensicht durchsuchen
-            foreach (DataRowView zeile in dvDatensicht) {
-                // Leere Felder nicht berücksichtigen
-                if (!Convert.IsDBNull(zeile[field])) {
-                    result = zeile[field];
-                    break;
-                }
-            }
-
-            // Ausgabe zurückliefern
-            return result;
+            // DataView durchsuchen und Ausgabe zurückliefern
+            return (from DataRowView zeile 
+                    in dataView 
+                    where !Convert.IsDBNull(zeile[field]) 
+                    select zeile[field]).FirstOrDefault();
         }
 
 
@@ -47,26 +40,20 @@ namespace Roslan.DotNETUtils.Data {
         /// Ändert den Inhalt einer DataTable
         /// (The method is taken from Bibliothek.dll from Brandgroup (Volker Niemeyer), cleaned up and converted to C#)
         /// </summary>
-        /// <param name="tabelle">zu ändernde Tabelle</param>
+        /// <param name="table">zu ändernde Tabelle</param>
         /// <param name="filter">gesuchte Einträge</param>
-        /// <param name="field">Feldnamen</param>
+        /// <param name="fields">Feldnamen</param>
         /// <param name="content">Inhalte</param>
-        public static void ReplaceDataTableEntries(DataTable table, string filter, List<string> fields, List<string> content) {
-            DataRow[] drInhalte;              // Datensatzobjekt
-
+        public static void ReplaceDataTableEntries(DataTable table, string filter, IList<string> fields, IList<string> content) {
             // Nur hinzufügen, wenn gleiche Anzahl Felder und Inhalte
-            if (fields.Count == content.Count) {
-                drInhalte = table.Select(filter);
-                foreach (DataRow drInhalt in drInhalte) {
-                    // Alle Felder / Inhalte durchlaufen
-                    for (int i = 0; i < fields.Count; i++) {
+            if (fields.Count != content.Count) 
+                return;
 
-                        if (content[i] == "") {
-                            drInhalt[fields[i]] = DBNull.Value;
-                        } else {
-                            drInhalt[fields[i]] = content[i];
-                        }
-                    }
+            DataRow[] drInhalte = table.Select(filter);
+            foreach (var drInhalt in drInhalte) {
+                // Alle Felder / Inhalte durchlaufen
+                for (var i = 0; i < fields.Count; i++) {
+                    drInhalt[fields[i]] = content[i] == "" ? (object)DBNull.Value : (object)content[i];
                 }
             }
         }
@@ -83,18 +70,17 @@ namespace Roslan.DotNETUtils.Data {
         public static string ConvertDataTableToCSV(DataTable table, string separator = ",") {
             string result = null;
             TextWriter writer = new StringWriter();                                  // Dateiobjekt
-            DataRow[] drZeilen = table.Select();
 
             // Kopfzeile schreiben
-            StringBuilder strZeile = new StringBuilder();               // Textobjekt
-            for (int i = 0; i < table.Columns.Count; i++) {
+            var strZeile = new StringBuilder();               // Textobjekt
+            for (var i = 0; i < table.Columns.Count; i++) {
                 strZeile.Append(separator + table.Columns[i].ToString());
             }
             writer.WriteLine(strZeile.ToString().Substring(2));
 
-            foreach (DataRow drZeile in drZeilen) {
-                StringBuilder striZeile = new StringBuilder();              // Textobjekt
-                for (int i = 0; i < table.Columns.Count; i++) {
+            foreach (DataRow drZeile in table.Select()) {
+                var striZeile = new StringBuilder();              // Textobjekt
+                for (var i = 0; i < table.Columns.Count; i++) {
                     striZeile.Append(separator + drZeile[i].ToString());
                 }
                 writer.WriteLine(striZeile.ToString().Substring(2));
@@ -116,7 +102,7 @@ namespace Roslan.DotNETUtils.Data {
         /// </summary>
         /// <returns></returns>
         public static DataTable ConvertCsvToDataTable(string strCsv, string separator = ",") {
-            DataTable result = new DataTable();
+            var result = new DataTable();
             string[] lines = strCsv.Split(new[] { "\r\n" }, StringSplitOptions.None);
 
             if (lines.Length < 1) {
@@ -125,13 +111,13 @@ namespace Roslan.DotNETUtils.Data {
 
             string[] colNames = lines[0].Split(new[] { separator }, StringSplitOptions.None);
             int countCol = colNames.Length;
-            
+
             // Create Columns in DataTable
             foreach (string colName in colNames) {
                 result.Columns.Add(colName);
             }
 
-            foreach(string strRow in lines.Skip(1)) {
+            foreach (string strRow in lines.Skip(1)) {
                 string[] rowValues = strRow.Split(new[] { separator }, StringSplitOptions.None);
 
                 DataRow newRow = result.NewRow();

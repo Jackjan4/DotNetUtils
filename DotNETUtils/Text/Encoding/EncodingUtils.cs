@@ -1,6 +1,6 @@
-﻿namespace Roslan.DotNETUtils.Text.Encoding
+﻿namespace Roslan.DotNetUtils.Text.Encoding
 {
-    public class EncodingUtils
+    public static class EncodingUtils
     {
 
 

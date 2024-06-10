@@ -5,7 +5,7 @@ using System.Collections.Specialized;
 
 
 
-namespace Roslan.DotNETUtils.Collections {
+namespace Roslan.DotNetUtils.Collections {
 
 
 

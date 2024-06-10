@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Net.NetworkInformation;
 
-namespace Roslan.DotNETUtils.Net {
+namespace Roslan.DotNetUtils.Net {
     public static class NetworkUtils {
 
 

@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Roslan.DotNETUtils.Crypto;
+using Roslan.DotNetUtils.Crypto;
 
 namespace Roslan.DotNetUtils.IO {
     public static class FileUtils {
@@ -116,7 +116,6 @@ namespace Roslan.DotNetUtils.IO {
             if (options == null)
                 options = FileCopyDeltaOptions.Default;
 
-            // parameter bufferSize should be replaced with DeltaComparionOptions because not every delta comparison needs to open the files
             var filesEqual = false;
 
             if (File.Exists(destinationFilePath))
@@ -151,42 +150,49 @@ namespace Roslan.DotNetUtils.IO {
         /// <param name="compareMethod"></param>
         /// <param name="bufferSize"></param>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
-        public static async Task CopyFileDeltaAsync(string sourceFilePath, string destinationFilePath, FileCompareMethod compareMethod, int bufferSize = 4096) {
-            // parameter bufferSize should be replaced with DeltaComparionOptions because not every delta comparison needs to open the files
+        public static async Task CopyFileDeltaAsync(string sourceFilePath, string destinationFilePath, FileCopyDeltaOptions options = null) {
+            if (options == null)
+                options = FileCopyDeltaOptions.Default;
+
             var filesEqual = false;
 
             if (File.Exists(destinationFilePath))
-                switch (compareMethod) {
+                switch (options.CompareMethod) {
                     case FileCompareMethod.FileSize:
-                        filesEqual =
-                            new FileInfo(sourceFilePath).Length.Equals(new FileInfo(destinationFilePath).Length);
+                        var sourceFileSize = new FileInfo(sourceFilePath).Length;
+                        var destinationFileSize = new FileInfo(destinationFilePath).Length;
+                        filesEqual = sourceFileSize.Equals(destinationFileSize);
                         break;
                     case FileCompareMethod.Md5Hash:
 #if NETSTANDARD2_0
-                        filesEqual = CompareMd5FileHashes(sourceFilePath, destinationFilePath, bufferSize); // TODO: Check if we maybe are able to make this async sometime
+                        filesEqual = CompareMd5FileHashes(sourceFilePath, destinationFilePath, options.CompareBufferSize); // TODO: Check if we maybe are able to make this async sometime
 #elif NET8_0_OR_GREATER
-                        filesEqual = await CompareMd5FileHashesAsync(sourceFilePath, destinationFilePath, bufferSize);
+                        filesEqual = await CompareMd5FileHashesAsync(sourceFilePath, destinationFilePath, options.CompareBufferSize);
 #endif
                         break;
                     case FileCompareMethod.LastWriteTime:
-                        filesEqual = File.GetLastWriteTime(sourceFilePath)
-                            .Equals(File.GetLastWriteTime(destinationFilePath));
+                        var sourceLastWriteTime = File.GetLastWriteTime(sourceFilePath);
+                        var destinationLastWriteTime = File.GetLastWriteTime(destinationFilePath);
+                        filesEqual = sourceLastWriteTime.Equals(destinationLastWriteTime);
                         break;
                     default:
-                        throw new ArgumentOutOfRangeException(nameof(compareMethod), compareMethod, null);
+                        throw new ArgumentOutOfRangeException(nameof(options.CompareMethod), options.CompareMethod, null);
                 }
 
             if (!filesEqual) {
 #if NETSTANDARD2_0
-                using (var sFs = new FileStream(sourceFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
-                    using (var dFs = new FileStream(destinationFilePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, 4096, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
+                using (var sFs = new FileStream(sourceFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, options.CopyBufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
+                    using (var dFs = new FileStream(destinationFilePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, options.CopyBufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
 #elif NET8_0_OR_GREATER
-                await using (var sFs = new FileStream(sourceFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
-                    await using (var dFs = new FileStream(destinationFilePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, 4096, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
+                await using (var sFs = new FileStream(sourceFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, options.CopyBufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
+                    await using (var dFs = new FileStream(destinationFilePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, options.CopyBufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
 #endif
                         await sFs.CopyToAsync(dFs);
                     }
                 }
+                // Recreate FileInfo properties
+                File.SetCreationTime(destinationFilePath, File.GetCreationTime(sourceFilePath));
+                File.SetLastWriteTime(destinationFilePath, File.GetLastWriteTime(sourceFilePath));
             }
         }
     }

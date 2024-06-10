@@ -1,11 +1,10 @@
-﻿using Roslan.DotNETUtils.Collections;
-using Roslan.DotNETUtils.Crypto.Exceptions;
+﻿using Roslan.DotNetUtils.Crypto.Exceptions;
 using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Roslan.DotNETUtils.Crypto {
+namespace Roslan.DotNetUtils.Crypto {
 
 
     /// <summary>

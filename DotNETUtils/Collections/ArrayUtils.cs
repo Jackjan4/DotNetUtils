@@ -2,7 +2,7 @@
 
 
 
-namespace Roslan.DotNETUtils.Collections {
+namespace Roslan.DotNetUtils.Collections {
 
 
 

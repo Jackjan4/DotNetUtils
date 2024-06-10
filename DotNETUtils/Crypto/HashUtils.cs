@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Roslan.DotNETUtils.Crypto {
+namespace Roslan.DotNetUtils.Crypto {
 
 
 
