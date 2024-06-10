@@ -112,25 +112,28 @@ namespace Roslan.DotNetUtils.IO {
         /// <param name="compareMethod"></param>
         /// <param name="bufferSize"></param>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
-        public static void CopyFileDelta(string sourceFilePath, string destinationFilePath, FileCompareMethod compareMethod, int bufferSize = 4096) {
+        public static void CopyFileDelta(string sourceFilePath, string destinationFilePath, FileCopyDeltaOptions options = null) {
+            if (options == null)
+                options = FileCopyDeltaOptions.Default;
+
             // parameter bufferSize should be replaced with DeltaComparionOptions because not every delta comparison needs to open the files
             var filesEqual = false;
 
             if (File.Exists(destinationFilePath))
-                switch (compareMethod) {
+                switch (options.CompareMethod) {
                     case FileCompareMethod.FileSize:
                         filesEqual =
                             new FileInfo(sourceFilePath).Length.Equals(new FileInfo(destinationFilePath).Length);
                         break;
                     case FileCompareMethod.Md5Hash:
-                        filesEqual = CompareMd5FileHashes(sourceFilePath, destinationFilePath, bufferSize);
+                        filesEqual = CompareMd5FileHashes(sourceFilePath, destinationFilePath, options.CompareBufferSize);
                         break;
                     case FileCompareMethod.LastWriteTime:
                         filesEqual = File.GetLastWriteTime(sourceFilePath)
                             .Equals(File.GetLastWriteTime(destinationFilePath));
                         break;
                     default:
-                        throw new ArgumentOutOfRangeException(nameof(compareMethod), compareMethod, null);
+                        throw new ArgumentOutOfRangeException(nameof(options.CompareMethod), options.CompareMethod, null);
                 }
 
             if (!filesEqual) {
