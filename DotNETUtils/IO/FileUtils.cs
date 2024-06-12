@@ -167,7 +167,7 @@ namespace Roslan.DotNetUtils.IO {
 #if NETSTANDARD2_0
                         filesEqual = CompareMd5FileHashes(sourceFilePath, destinationFilePath, options.CompareBufferSize); // TODO: Check if we maybe are able to make this async sometime
 #elif NET8_0_OR_GREATER
-                        filesEqual = await CompareMd5FileHashesAsync(sourceFilePath, destinationFilePath, options.CompareBufferSize);
+                        filesEqual = await CompareMd5FileHashesAsync(sourceFilePath, destinationFilePath, options.CompareBufferSize).ConfigureAwait(false);
 #endif
                         break;
                     case FileCompareMethod.LastWriteTime:
@@ -187,7 +187,7 @@ namespace Roslan.DotNetUtils.IO {
                 await using (var sFs = new FileStream(sourceFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, options.CopyBufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
                     await using (var dFs = new FileStream(destinationFilePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, options.CopyBufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
 #endif
-                        await sFs.CopyToAsync(dFs);
+                        await sFs.CopyToAsync(dFs).ConfigureAwait(false);
                     }
                 }
                 // Recreate FileInfo properties
