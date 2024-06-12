@@ -9,7 +9,7 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <NeutralLanguage>en</NeutralLanguage>
     <AssemblyVersion>1.5.4</AssemblyVersion>
-    <FileVersion>1.5.3</FileVersion>
+    <FileVersion>1.5.4</FileVersion>
     <Title>Roslan.DotNetUtils.WinForms</Title>
     <Version>1.5.4</Version>
     <Authors>Jan-Philipp Roslan</Authors>
