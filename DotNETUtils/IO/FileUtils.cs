@@ -8,6 +8,7 @@ namespace Roslan.DotNetUtils.IO {
     public static class FileUtils {
 
 
+
         #region "File Hashing"
         /// <summary>
         /// 
@@ -109,15 +110,12 @@ namespace Roslan.DotNetUtils.IO {
         /// </summary>
         /// <param name="sourceFilePath"></param>
         /// <param name="destinationFilePath"></param>
-        /// <param name="compareMethod"></param>
-        /// <param name="bufferSize"></param>
+        /// <param name="options"></param>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         public static void CopyFileDelta(string sourceFilePath, string destinationFilePath, FileCopyDeltaOptions options = null) {
-            if (options == null)
-                options = FileCopyDeltaOptions.Default;
+            options = options ?? FileCopyDeltaOptions.Default;
 
             var filesEqual = false;
-
             if (File.Exists(destinationFilePath))
                 switch (options.CompareMethod) {
                     case FileCompareMethod.FileSize:
@@ -134,7 +132,6 @@ namespace Roslan.DotNetUtils.IO {
                     default:
                         throw new ArgumentOutOfRangeException(nameof(options.CompareMethod), options.CompareMethod, null);
                 }
-
             if (!filesEqual) {
                 File.Copy(sourceFilePath, destinationFilePath, true);
             }
@@ -151,11 +148,9 @@ namespace Roslan.DotNetUtils.IO {
         /// <param name="bufferSize"></param>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         public static async Task CopyFileDeltaAsync(string sourceFilePath, string destinationFilePath, FileCopyDeltaOptions options = null) {
-            if (options == null)
-                options = FileCopyDeltaOptions.Default;
+            options = options ?? FileCopyDeltaOptions.Default;
 
             var filesEqual = false;
-
             if (File.Exists(destinationFilePath))
                 switch (options.CompareMethod) {
                     case FileCompareMethod.FileSize:
@@ -178,22 +173,38 @@ namespace Roslan.DotNetUtils.IO {
                     default:
                         throw new ArgumentOutOfRangeException(nameof(options.CompareMethod), options.CompareMethod, null);
                 }
-
             if (!filesEqual) {
-#if NETSTANDARD2_0
-                using (var sFs = new FileStream(sourceFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, options.CopyBufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
-                    using (var dFs = new FileStream(destinationFilePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, options.CopyBufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
-#elif NET8_0_OR_GREATER
-                await using (var sFs = new FileStream(sourceFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, options.CopyBufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
-                    await using (var dFs = new FileStream(destinationFilePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, options.CopyBufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
-#endif
-                        await sFs.CopyToAsync(dFs).ConfigureAwait(false);
-                    }
-                }
-                // Recreate FileInfo properties
-                File.SetCreationTime(destinationFilePath, File.GetCreationTime(sourceFilePath));
-                File.SetLastWriteTime(destinationFilePath, File.GetLastWriteTime(sourceFilePath));
+                await CopyFileWithStreamAsync(sourceFilePath, destinationFilePath, options.CopyBufferSize).ConfigureAwait(false);
             }
+        }
+
+
+
+        /// <summary>
+        /// Copies an existing file to a new file asynchronously.
+        /// The reason this method exists is because the built-in File.Copy method has no async version.
+        /// There exists FileStream.CopyToAsync(fs) which is used here.
+        /// For more information see:
+        /// https://github.com/dotnet/runtime/issues/20697
+        /// https://github.com/dotnet/runtime/issues/20695
+        /// </summary>
+        /// <param name="sourceFilePath"></param>
+        /// <param name="destinationFilePath"></param>
+        /// <param name="bufferSize"></param>
+        /// <returns></returns>
+        public static async Task CopyFileWithStreamAsync(string sourceFilePath, string destinationFilePath, int bufferSize = 4096) {
+#if NETSTANDARD2_0
+            using (var sFs = new FileStream(sourceFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
+                using (var dFs = new FileStream(destinationFilePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
+#elif NET8_0_OR_GREATER
+            await using (var sFs = new FileStream(sourceFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
+                await using (var dFs = new FileStream(destinationFilePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
+#endif
+                    await sFs.CopyToAsync(dFs).ConfigureAwait(false);
+                }
+            }
+            // Recreate FileInfo properties
+            File.SetLastWriteTime(destinationFilePath, File.GetLastWriteTime(sourceFilePath));
         }
     }
 }
