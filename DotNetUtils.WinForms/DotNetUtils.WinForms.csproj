@@ -8,15 +8,17 @@
     <SupportedOSPlatformVersion>8.0</SupportedOSPlatformVersion>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <NeutralLanguage>en</NeutralLanguage>
-    <AssemblyVersion>1.5.4</AssemblyVersion>
-    <FileVersion>1.5.4</FileVersion>
+    <AssemblyVersion>1.5.6</AssemblyVersion>
+    <FileVersion>1.5.6</FileVersion>
     <Title>Roslan.DotNetUtils.WinForms</Title>
-    <Version>1.5.4</Version>
+    <Version>1.5.6</Version>
     <Authors>Jan-Philipp Roslan</Authors>
     <RepositoryType>git</RepositoryType>
     <PackageTags>WinForms;</PackageTags>
     <IncludeSymbols>True</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <RootNamespace>Roslan.DotNetUtils.WinForms</RootNamespace>
+    <AssemblyName>Roslan.DotNetUtils.WinForms</AssemblyName>
   </PropertyGroup>
 
 </Project>

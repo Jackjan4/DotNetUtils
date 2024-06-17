@@ -1,8 +1,6 @@
 ﻿using System.Diagnostics;
-using System.Reflection;
-using System.Text;
 
-namespace DotNetUtils.WinForms.Application {
+namespace Roslan.DotNetUtils.WinForms.Application {
     public class ApplicationUtils {
 
 
