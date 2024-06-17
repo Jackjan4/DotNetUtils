@@ -1,4 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices;
+
+
 
 namespace Roslan.DotNetUtils.Text {
     public static class StringUtils {
@@ -26,6 +31,48 @@ namespace Roslan.DotNetUtils.Text {
             for (var i = 0; i < hexStr.Length / 2; i++) {
                 result[i] = Convert.ToByte(hexStr.Substring(i * 2, 2), 16);
             }
+            return result;
+        }
+
+
+
+        /// <summary>
+        /// Returns the value of a command-line option.
+        /// This function can detect:
+        /// --optionName=value
+        /// -o=value
+        /// </summary>
+        /// <returns></returns>
+        public static string GetCommandLineOption(IEnumerable<string> args, string optionName) {
+            // This function can detect:
+            // --optionName=value
+            // -o=value
+            //
+            // TODO: This function can't detect:
+            // --optionName value (because they would probably be in different indexes)
+            // -o value (because they would probably be in different indexes)
+            string result;
+
+            string prefix = "";
+
+            // Check if optionName exists and detect prefix
+            var filtered = args.FirstOrDefault(arg => {
+                if (arg.StartsWith("--" + optionName)) {
+                    prefix = "--";
+                    return true;
+                }
+                if (arg.StartsWith("-" + optionName)) {
+                    prefix = "-";
+                    return true;
+                }
+                return false;
+            });
+
+            if (filtered == null || String.IsNullOrEmpty(prefix)) {
+                return null;
+            }
+
+            result = filtered.Substring((prefix.Length == 1 ? 2 : 3) + optionName.Length);
             return result;
         }
 

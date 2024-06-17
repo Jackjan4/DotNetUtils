@@ -4,6 +4,11 @@ namespace Roslan.DotNetUtils.WinForms.Application {
     public class ApplicationUtils {
 
 
+
+        /// <summary>
+        /// Restarts the currently running WinForms application without any arguments.
+        /// This function is an alternative to Application.Restart() since that will restart the application with the same arguments that it was already started with.
+        /// </summary>
         public static void RestartApplicationWithoutArgs() {
             var currentStartInfo = new ProcessStartInfo() {
                 FileName = System.Windows.Forms.Application.ExecutablePath,
