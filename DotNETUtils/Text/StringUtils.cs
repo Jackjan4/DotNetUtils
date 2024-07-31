@@ -53,7 +53,7 @@ namespace Roslan.DotNetUtils.Text {
             // -o value (because they would probably be in different indexes)
             string result;
 
-            string prefix = "";
+            var prefix = "";
 
             // Check if optionName exists and detect prefix
             var filtered = args.FirstOrDefault(arg => {
@@ -68,7 +68,7 @@ namespace Roslan.DotNetUtils.Text {
                 return false;
             });
 
-            if (filtered == null || String.IsNullOrEmpty(prefix)) {
+            if (filtered == null || string.IsNullOrEmpty(prefix)) {
                 return null;
             }
 
