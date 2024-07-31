@@ -4,7 +4,7 @@
     <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
     <RootNamespace>Roslan.DotNetUtils</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.5.6</Version>
+    <Version>1.5.7</Version>
     <Authors>Jan-Philipp Roslan</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/Jackjan4/DotNetUtils/tree/master/DotNETUtils</PackageProjectUrl>
@@ -13,15 +13,19 @@
     <Copyright>Licensed under MIT License</Copyright>
     <Company></Company>
     <NeutralLanguage>en</NeutralLanguage>
-    <PackageReleaseNotes>Added Ping functions to NetUtils</PackageReleaseNotes>
-    <AssemblyVersion>1.5.6</AssemblyVersion>
-    <FileVersion>1.5.6</FileVersion>
+    <PackageReleaseNotes>Async Function in FileUtils and HashUtils are now also supported in .NET Standard 2.0 but only run synchronous</PackageReleaseNotes>
+    <AssemblyVersion>1.5.7</AssemblyVersion>
+    <FileVersion>1.5.7</FileVersion>
     <Description>Common utilities for .NET applications</Description>
     <Title>Roslan.DotNetUtils</Title>
     <RepositoryType>git</RepositoryType>
-    <PackageId>Roslan.$(AssemblyName)</PackageId>
+    <PackageId>Roslan.DotNetUtils</PackageId>
     <IncludeSymbols>True</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <SignAssembly>False</SignAssembly>
+    <Product>Roslan.DotNetUtils</Product>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -39,8 +43,23 @@
     <IsAotCompatible>True</IsAotCompatible>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
+    <DebugType>none</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0|AnyCPU'">
+    <DebugType>none</DebugType>
+  </PropertyGroup>
+
   <ItemGroup>
     <Folder Include="Profiling\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

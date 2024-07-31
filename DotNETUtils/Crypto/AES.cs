@@ -113,7 +113,7 @@ namespace Roslan.DotNetUtils.Crypto {
         /// </summary>
         /// <returns>The decrypted stream</returns>
         /// <exception cref="CryptographicException">Will be thrown when the key is wrong</exception>
-        public static String Decrypt(byte[] cipherText, byte[] key, byte[] iv) {
+        public static string Decrypt(byte[] cipherText, byte[] key, byte[] iv) {
             string result = null;
 
             // Check arguments.
@@ -122,7 +122,6 @@ namespace Roslan.DotNetUtils.Crypto {
                 if (key != null && key.Length > 0)
 
                     if (iv != null || iv.Length > 0)
-
 
                         // Create an Aes object
                         // with the specified key and IV.
@@ -163,7 +162,6 @@ namespace Roslan.DotNetUtils.Crypto {
         public static string Decrypt(string cyphertext, string key) {
             byte[] byteKey = GetKey(key, AES256_KEYLENGTH_BYTE);
 
-
             // Get IV
             byte[] iv = new byte[AES256_IVLENGTH_BYTE];
             for (int i = 0; i < iv.Length; i++) {
@@ -182,7 +180,7 @@ namespace Roslan.DotNetUtils.Crypto {
             try {
                 result = Decrypt(cypherBytes, byteKey, iv);
             } catch (BadKeyException ex) {
-                throw ex;
+				throw ex;
             }
             return result;
         }

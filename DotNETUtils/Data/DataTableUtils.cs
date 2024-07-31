@@ -1,39 +1,36 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
-using static System.Net.Mime.MediaTypeNames;
-using static System.Net.WebRequestMethods;
 
 namespace Roslan.DotNetUtils.Data {
     public static class DataTableUtils {
 
 
+
         /// <summary>
         /// Filter DataTable and return the content of the first found field
         /// (The method is taken from Bibliothek.dll from Brandgroup (Volker Niemeyer), cleaned up and converted to C#)
-        ///
+        /// </summary>
         /// <param name="table">The DataTable to be filtered</param>
         /// <param name="filter">gesuchte Einträge</param>
         /// <param name="field">Feldname, dessen Inhalt zurückgeliefert werden soll</param>
         public static object FilterDataTable(DataTable table, string filter, string sorting, string field) {
-            var dataView = new DataView(table);
+			var dataView = new DataView(table) {
+				// Filter an Dataview übergeben
+				RowFilter = filter,
+				Sort = sorting
+			};
 
-            // Filter an Dataview übergeben
-            dataView.RowFilter = filter;
-            dataView.Sort = sorting;
-
-            // DataView durchsuchen und Ausgabe zurückliefern
-            return (from DataRowView zeile 
+			// DataView durchsuchen und Ausgabe zurückliefern
+			return (from DataRowView zeile 
                     in dataView 
                     where !Convert.IsDBNull(zeile[field]) 
                     select zeile[field]).FirstOrDefault();
         }
+
 
 
         /// <summary>
@@ -67,7 +64,7 @@ namespace Roslan.DotNetUtils.Data {
         /// <param name="table">Datatable, welches gespeichert werden soll</param>
         /// <param name="separator">Wonach sollen die Spalten getrennt werden (Normalerweise ein Semikolon)</param>
         /// <returns></returns>
-        public static string ConvertDataTableToCSV(DataTable table, string separator = ",") {
+        public static string ConvertDataTableToCsv(DataTable table, string separator = ",") {
             string result = null;
             TextWriter writer = new StringWriter();                                  // Dateiobjekt
 
@@ -110,7 +107,7 @@ namespace Roslan.DotNetUtils.Data {
             }
 
             string[] colNames = lines[0].Split(new[] { separator }, StringSplitOptions.None);
-            int countCol = colNames.Length;
+            var countCol = colNames.Length;
 
             // Create Columns in DataTable
             foreach (string colName in colNames) {
