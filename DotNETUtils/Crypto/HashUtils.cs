@@ -47,7 +47,7 @@ namespace Roslan.DotNetUtils.Crypto {
 				return sha256.ComputeHash(encoding.GetBytes(str));
 			}
 #elif NET8_0_OR_GREATER
-            return SHA256.HashData(encoding.GetBytes(str)); // The HashData methods only exists since .NET 8
+			return SHA256.HashData(encoding.GetBytes(str)); // The HashData methods only exists since .NET 8
 #endif
 		}
 
@@ -64,7 +64,7 @@ namespace Roslan.DotNetUtils.Crypto {
 				return sha256.ComputeHash(stream);
 			}
 #elif NET8_0_OR_GREATER
-            return SHA256.HashData(stream);
+			return SHA256.HashData(stream);
 #endif
 		}
 
@@ -129,7 +129,7 @@ namespace Roslan.DotNetUtils.Crypto {
 				return md5.ComputeHash(encoding.GetBytes(str));
 			}
 #elif NET8_0_OR_GREATER
-            return MD5.HashData(encoding.GetBytes(str));
+			return MD5.HashData(encoding.GetBytes(str));
 #endif
 		}
 
@@ -146,25 +146,22 @@ namespace Roslan.DotNetUtils.Crypto {
 				return md5.ComputeHash(stream);
 			}
 #elif NET8_0_OR_GREATER
-            return MD5.HashData(stream);
+			return MD5.HashData(stream);
 #endif
 		}
 
 
 
+#if NET8_0_OR_GREATER // Async hashing only exists since .NET 5 (.ComputeHashAsync())
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="stream"></param>
 		/// <returns></returns>
 		public static async Task<byte[]> Md5Async(Stream stream) {
-#if NET8_0_OR_GREATER
-            return await MD5.HashDataAsync(stream); // The HashDataAsync Function only exists since .NET 8
-#elif (NETSTANDARD2_0 || NET46)
-			return Md5(stream); // NOTE: This is not async because async hashing only exists since .NET 8. Therefore we redirect to our synchronous function
-#endif
+			return await MD5.HashDataAsync(stream); // The HashDataAsync Function only exists since .NET 8
 		}
-
+#endif
 
 
 		/// <summary>
@@ -203,18 +200,17 @@ namespace Roslan.DotNetUtils.Crypto {
 
 
 
+#if NET8_0_OR_GREATER
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="stream"></param>
 		/// <returns></returns>
 		public static async Task<string> Md5StringAsync(Stream stream) {
-#if NET8_0_OR_GREATER
-            byte[] hashBytes = await MD5.HashDataAsync(stream); // The HashDataAsync Function only exists since .NET 8
-            return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
-#elif (NETSTANDARD2_0 || NET46)
-			return Md5String(stream);
-#endif
+			byte[] hashBytes = await MD5.HashDataAsync(stream); // The HashDataAsync Function only exists since .NET 8
+			return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+
 		}
+#endif
 	}
 }

@@ -24,7 +24,7 @@ namespace Roslan.DotNetUtils.IO {
 
 
 
-
+#if NET8_0_OR_GREATER
 		/// <summary>
 		/// 
 		/// </summary>
@@ -32,17 +32,11 @@ namespace Roslan.DotNetUtils.IO {
 		/// <param name="bufferSize"></param>
 		/// <returns></returns>
 		public static async Task<byte[]> Md5HashAsync(string path, int bufferSize = 4096) {
-#if NET8_0_OR_GREATER
 			await using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
-#elif NETSTANDARD2_0
-			using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
-#elif NET46
-			using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
-#endif
 				return await HashUtils.Md5Async(fs);
 			}
 		}
-
+#endif
 
 
 		/// <summary>
@@ -59,7 +53,7 @@ namespace Roslan.DotNetUtils.IO {
 
 
 
-
+#if NET8_0_OR_GREATER
 		/// <summary>
 		/// 
 		/// </summary>
@@ -67,16 +61,11 @@ namespace Roslan.DotNetUtils.IO {
 		/// <param name="bufferSize"></param>
 		/// <returns></returns>
 		public static async Task<string> Md5HashStringAsync(string path, int bufferSize = 4096) {
-#if NET8_0_OR_GREATER
 			await using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
-#elif NETSTANDARD2_0
-			using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
-#elif NET46
-			using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
-#endif
 				return await HashUtils.Md5StringAsync(fs);
 			}
 		}
+#endif
 
 
 
@@ -96,6 +85,7 @@ namespace Roslan.DotNetUtils.IO {
 
 
 
+#if NET8_0_OR_GREATER
 		/// <summary>
 		/// 
 		/// </summary>
@@ -104,20 +94,14 @@ namespace Roslan.DotNetUtils.IO {
 		/// <param name="bufferSize"></param>
 		/// <returns></returns>
 		public static async Task<bool> CompareMd5FileHashesAsync(string path1, string path2, int bufferSize = 4096) {
-#if NET8_0_OR_GREATER
 			Task<byte[]> task1 = Md5HashAsync(path1, bufferSize);
 			Task<byte[]> task2 = Md5HashAsync(path2, bufferSize);
 
 			await Task.WhenAll(task1, task2);
 
 			return task1.Result.SequenceEqual(task2.Result);
-#elif NETSTANDARD2_0
-			return CompareMd5FileHashes(path1, path2, bufferSize);
-#elif NET46
-			return CompareMd5FileHashes(path1, path2, bufferSize);
-#endif
 		}
-
+#endif
 		#endregion
 
 
@@ -155,7 +139,7 @@ namespace Roslan.DotNetUtils.IO {
 		}
 
 
-
+#if NET8_0_OR_GREATER
 		/// <summary>
 		/// 
 		/// </summary>
@@ -174,13 +158,11 @@ namespace Roslan.DotNetUtils.IO {
 						var destinationFileSize = new FileInfo(destinationFilePath).Length;
 						filesEqual = sourceFileSize.Equals(destinationFileSize);
 						break;
+
 					case FileCompareMethod.Md5Hash:
-#if NETSTANDARD2_0
-						filesEqual = CompareMd5FileHashes(sourceFilePath, destinationFilePath, options.CompareBufferSize); // TODO: Check if we maybe are able to make this async sometime
-#elif NET8_0_OR_GREATER
 						filesEqual = await CompareMd5FileHashesAsync(sourceFilePath, destinationFilePath, options.CompareBufferSize).ConfigureAwait(false);
-#endif
 						break;
+
 					case FileCompareMethod.LastWriteTime:
 						var sourceLastWriteTime = File.GetLastWriteTime(sourceFilePath);
 						var destinationLastWriteTime = File.GetLastWriteTime(destinationFilePath);
@@ -193,6 +175,7 @@ namespace Roslan.DotNetUtils.IO {
 				await CopyFileWithStreamAsync(sourceFilePath, destinationFilePath, options.CopyBufferSize).ConfigureAwait(false);
 			}
 		}
+#endif
 
 
 
@@ -209,15 +192,12 @@ namespace Roslan.DotNetUtils.IO {
 		/// <param name="bufferSize"></param>
 		/// <returns></returns>
 		public static async Task CopyFileWithStreamAsync(string sourceFilePath, string destinationFilePath, int bufferSize = 4096) {
-#if NETSTANDARD2_0
+#if (NETSTANDARD2_0 || NET46)
 			using (var sFs = new FileStream(sourceFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
 				using (var dFs = new FileStream(destinationFilePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
 #elif NET8_0_OR_GREATER
 			await using (var sFs = new FileStream(sourceFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
 				await using (var dFs = new FileStream(destinationFilePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
-#elif NET46
-			using (var sFs = new FileStream(sourceFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
-				using (var dFs = new FileStream(destinationFilePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
 #endif
 					await sFs.CopyToAsync(dFs).ConfigureAwait(false);
 				}
