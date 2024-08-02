@@ -4,50 +4,30 @@ namespace Roslan.DotNetUtils.IO {
 
 
 
-    /// <summary>
-    /// 
-    /// </summary>
-    public class FileCopyDeltaOptions {
+	/// <summary>
+	/// 
+	/// </summary>
+	public class FileCopyDeltaOptions {
 
-        public int CompareBufferSize = 4096;
+		public readonly int CompareBufferSize;
 
-        public int CopyBufferSize = 4096;
+		public readonly int CopyBufferSize;
 
-        public FileCompareMethod CompareMethod = FileCompareMethod.Md5Hash;
-
-
-        public static FileCopyDeltaOptions Default => new FileCopyDeltaOptions();
-
-        private FileCopyDeltaOptions() {
-        }
-
-        public FileCopyDeltaOptions(int compareBufferSize, int copyBufferSize, FileCompareMethod compareMethod) {
-            CompareBufferSize = compareBufferSize;
-            CopyBufferSize = copyBufferSize;
-            CompareMethod = compareMethod;
-        }
+		public FileCompareMethod CompareMethod;
 
 
+		public static FileCopyDeltaOptions Default => new FileCopyDeltaOptions();
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="compareMethod"></param>
-        /// <returns></returns>
-        internal static FileCompareMethod ConvertFileCompareMethodFromDotNetUtils(DotNetUtils.IO.FileCompareMethod compareMethod) {
-            return (FileCompareMethod)Enum.Parse(typeof(FileCompareMethod), compareMethod.ToString(), true);
-        }
+		private FileCopyDeltaOptions() {
+			CompareBufferSize = 4096;
+			CopyBufferSize = 4096;
+			CompareMethod = FileCompareMethod.Md5Hash;
+		}
 
-        
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="compareMethod"></param>
-        /// <returns></returns>
-        internal static DotNetUtils.IO.FileCompareMethod ConvertFileCompareMethodToDotNetUtils(FileCompareMethod compareMethod) {
-            return (DotNetUtils.IO.FileCompareMethod)Enum.Parse(typeof(DotNetUtils.IO.FileCompareMethod), compareMethod.ToString(), true);
-        }
-
-    }
+		public FileCopyDeltaOptions(int compareBufferSize, int copyBufferSize, FileCompareMethod compareMethod) {
+			CompareBufferSize = compareBufferSize;
+			CopyBufferSize = copyBufferSize;
+			CompareMethod = compareMethod;
+		}
+	}
 }
