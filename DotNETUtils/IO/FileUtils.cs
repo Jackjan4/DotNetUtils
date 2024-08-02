@@ -36,6 +36,8 @@ namespace Roslan.DotNetUtils.IO {
 			await using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
 #elif NETSTANDARD2_0
 			using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
+#elif NET46
+			using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
 #endif
 				return await HashUtils.Md5Async(fs);
 			}
@@ -68,6 +70,8 @@ namespace Roslan.DotNetUtils.IO {
 #if NET8_0_OR_GREATER
 			await using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
 #elif NETSTANDARD2_0
+			using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
+#elif NET46
 			using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
 #endif
 				return await HashUtils.Md5StringAsync(fs);
@@ -108,6 +112,8 @@ namespace Roslan.DotNetUtils.IO {
 
 			return task1.Result.SequenceEqual(task2.Result);
 #elif NETSTANDARD2_0
+			return CompareMd5FileHashes(path1, path2, bufferSize);
+#elif NET46
 			return CompareMd5FileHashes(path1, path2, bufferSize);
 #endif
 		}
@@ -209,6 +215,9 @@ namespace Roslan.DotNetUtils.IO {
 #elif NET8_0_OR_GREATER
 			await using (var sFs = new FileStream(sourceFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
 				await using (var dFs = new FileStream(destinationFilePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
+#elif NET46
+			using (var sFs = new FileStream(sourceFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
+				using (var dFs = new FileStream(destinationFilePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
 #endif
 					await sFs.CopyToAsync(dFs).ConfigureAwait(false);
 				}
