@@ -178,12 +178,12 @@ namespace Roslan.DotNetUtils.IO {
 				}
 			if (!filesEqual) {
 				var interceptProgress = new Progress<Tuple<long, long>>(prog => {
-					progress.Report(new Tuple<long, long, bool>(prog.Item1, prog.Item2, true));
+					progress?.Report(new Tuple<long, long, bool>(prog.Item1, prog.Item2, true));
 				});
 				await CopyFileAsync(sourceFilePath, destinationFilePath, options.CopyBufferSize, interceptProgress).ConfigureAwait(false);
 			} else {
 				var sourceFileSize = new FileInfo(sourceFilePath).Length;
-				progress.Report(new Tuple<long, long, bool>(sourceFileSize, sourceFileSize, false));
+				progress?.Report(new Tuple<long, long, bool>(sourceFileSize, sourceFileSize, false));
 			}
 		}
 #endif
