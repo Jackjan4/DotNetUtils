@@ -1,156 +1,184 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Threading.Tasks;
-using Dapper;
+
+
 
 namespace Roslan.DotNetUtils.Db.Data {
-	public static class DbUtils {
 
 
 
-		private const string SqlTestQuery = "SELECT 'OK' AS Feld";
+    public static class DbUtils {
 
 
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		public static bool TestConnection(DbConnection dbConnection) {
-			// Execute test query
-			DataTable result = null;
-
-			result = ExecuteQuery(dbConnection, SqlTestQuery); // This can throw, user needs to handle errors
-
-			if (result == null)
-				return false;
-
-			return result.Rows.Count > 0;
-		}
+        private const string SqlTestQuery = "SELECT 'OK' AS Feld";
 
 
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		public static async Task<bool> TestConnectionAsync(DbConnection dbConnection) {
-			// Execute test query
-			DataTable result = null;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public static bool TestConnection(DbConnection dbConnection) {
+            // Execute test query
+            DataTable result = null;
 
-			result = await ExecuteQueryAsync(dbConnection, SqlTestQuery); // This can throw, user needs to handle errors
+            result = ExecuteQuery(dbConnection, SqlTestQuery); // This can throw, user needs to handle errors
 
-			if (result == null)
-				return false;
+            if (result == null)
+                return false;
 
-			return result.Rows.Count > 0;
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="dbConnection"></param>
-		/// <param name="query"></param>
-		/// <returns></returns>
-		public static IEnumerable<T> ExecuteQuery<T>(DbConnection dbConnection, string query) {
-			IEnumerable<T> result;
-
-			using (dbConnection) {
-				dbConnection.Open();
-				result = dbConnection.Query<T>(query);
-
-				dbConnection.Close();
-			}
-			return result;
-		}
+            return result.Rows.Count > 0;
+        }
 
 
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="query"></param>
-		/// <returns></returns>
-		public static DataTable ExecuteQuery(DbConnection dbConnection, string query) {
-			DataTable result = new DataTable();
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public static async Task<bool> TestConnectionAsync(DbConnection dbConnection) {
+            // Execute test query
+            DataTable result = null;
 
-			// Create DbCommand
-			using (dbConnection)
-			using (DbCommand dbCommand = dbConnection.CreateCommand()) {
-				dbCommand.CommandText = query;
+            result = await ExecuteQueryAsync(dbConnection, SqlTestQuery); // This can throw, user needs to handle errors
 
-				// Open the connection
-				dbConnection.Open();
+            if (result == null)
+                return false;
 
-				using (DbDataReader reader = dbCommand.ExecuteReader()) {
-					result.Load(reader);
-
-					// Close reader and connection
-					reader.Close();
-					dbConnection.Close();
-				}
-			}
-
-			return result;
-		}
+            return result.Rows.Count > 0;
+        }
 
 
 
+        /// There was a static function ExecuteQuery<T> with return type IEnumerable<T> here which used dapper
+        /// to map the result onto an object. That function is removed because it had no benefit over doing that manually with dapper.
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="dbConnection"></param>
-		/// <param name="query"></param>
-		/// <returns></returns>
-		public static async Task<DataTable> ExecuteQueryAsync(DbConnection dbConnection, string query) {
-			var result = new DataTable();
 
-			// Create DbCommand
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dbConnection"></param>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public static DataTable ExecuteQuery(DbConnection dbConnection, string query) {
+            var result = new DataTable();
+
+            // We do not need to 'using' the connection. The caller must do that
+
+            // Create DbCommand
+            using (var dbCommand = dbConnection.CreateCommand()) {
+                dbCommand.CommandText = query;
+
+                // Open the connection
+                dbConnection.Open();
+
+                using (var reader = dbCommand.ExecuteReader(CommandBehavior.CloseConnection)) {
+
+                    result.BeginLoadData();
+                    result.Load(reader);
+                    result.EndLoadData();
+
+                    // Reader is closed by disposing it
+                    // dbConnection is closed by caller by disposing it
+                }
+            }
+
+            return result;
+        }
+
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dbConnection"></param>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public static async Task<DataTable> ExecuteQueryAsync(DbConnection dbConnection, string query) {
+            var result = new DataTable();
+
 #if NET8_0_OR_GREATER
-			// C# Version: 
+            // C# Version: > 7.3
 
-			await using (dbConnection) {
-				await using (var dbCommand = dbConnection.CreateCommand()) {
-					dbCommand.CommandText = query;
+            await using var dbCommand = dbConnection.CreateCommand();
+            dbCommand.CommandText = query;
 
-					// Open the connection
-					await dbConnection.OpenAsync();
+            // Open the connection
+            await dbConnection.OpenAsync();
 
-					await using (var reader = await dbCommand.ExecuteReaderAsync()) {
-						result.Load(reader);
+            await using var reader = await dbCommand.ExecuteReaderAsync(CommandBehavior.CloseConnection);
 
-						// Closing the reader is not needed because .Dispose will already do that
-						// Close connection
-						await dbConnection.CloseAsync();
-					}
-				}
-			}
+            result.BeginLoadData();
+            result.Load(reader);
+            result.EndLoadData();
+
+            // Closing the reader is not needed because disposing it will already do that
+            // Closing the connection is not needed because the caller will do that
+
 #else
-			// C# Version 7.3
-			using (dbConnection) {
-				using (var dbCommand = dbConnection.CreateCommand()) {
-					dbCommand.CommandText = query;
+            // C# Version 7.3
+            using (var dbCommand = dbConnection.CreateCommand()) {
+                dbCommand.CommandText = query;
 
-					// Open the connection
-					await dbConnection.OpenAsync();
+                // Open the connection
+                await dbConnection.OpenAsync();
 
-					using (var reader = await dbCommand.ExecuteReaderAsync()) {
-						result.Load(reader);
+                using (var reader = await dbCommand.ExecuteReaderAsync(CommandBehavior.CloseConnection)) {
+                    result.Load(reader);
 
-						// Closing the reader is not needed because .Dispose will already do that
-						// Close connection
-						dbConnection.Close();
-					}
-				}
-			}
+                    // Closing the reader is not needed because .Dispose will already do that
+                    // Closing the connection is not needed because the caller will do that
+                }
+            }
+
 #endif
-			return result;
-		}
-	}
+            return result;
+        }
+
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dbConnection"></param>
+        /// <param name="storedProcedureName"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        public static async Task<DataTable> ExecuteStoredProcedureAsync(DbConnection dbConnection,
+            string storedProcedureName, params DbParameter[] parameters) {
+            var result = new DataTable();
+
+#if NET8_0_OR_GREATER
+            await using var dbCommand = dbConnection.CreateCommand();
+            dbCommand.CommandText = storedProcedureName;
+            dbCommand.CommandType = CommandType.StoredProcedure;
+            dbCommand.Parameters.AddRange(parameters);
+
+            await dbConnection.OpenAsync();
+
+            await using var reader = await dbCommand.ExecuteReaderAsync(CommandBehavior.CloseConnection);
+            result.BeginLoadData();
+            result.Load(reader);
+            result.EndLoadData();
+#else
+            // C# Version 7.3
+            using (var dbCommand = dbConnection.CreateCommand()) {
+                dbCommand.CommandText = storedProcedureName;
+                dbCommand.CommandType = CommandType.StoredProcedure;
+                dbCommand.Parameters.AddRange(parameters);
+
+                await dbConnection.OpenAsync();
+
+                using (var reader = await dbCommand.ExecuteReaderAsync(CommandBehavior.CloseConnection)) {
+                    result.Load(reader);
+                }
+            }
+#endif
+
+            return result;
+        }
+    }
 }
