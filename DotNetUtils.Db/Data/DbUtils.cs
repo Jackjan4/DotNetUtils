@@ -53,12 +53,14 @@ namespace Roslan.DotNetUtils.Db.Data {
 
 
 
-        /// There was a static function ExecuteQuery<T> with return type IEnumerable<T> here which used dapper
+        /// There was a static function ExecuteQuery<T> (with return type IEnumerable<T>) here which used dapper
         /// to map the result onto an object. That function is removed because it had no benefit over doing that manually with dapper.
+        /// In the same way, ExecuteQueryAsync<T> is not needed, however was never implemented.
+
 
 
         /// <summary>
-        /// 
+        /// Executes an SQL query and returns the result as a DataTable.
         /// </summary>
         /// <param name="dbConnection"></param>
         /// <param name="query"></param>
@@ -92,7 +94,7 @@ namespace Roslan.DotNetUtils.Db.Data {
 
 
         /// <summary>
-        /// 
+        /// Executes an SQL query asynchronously and returns the result as a DataTable.
         /// </summary>
         /// <param name="dbConnection"></param>
         /// <param name="query"></param>
@@ -141,7 +143,7 @@ namespace Roslan.DotNetUtils.Db.Data {
 
 
         /// <summary>
-        /// 
+        /// Executes a stored procedure asynchronously and returns the result as a DataTable.
         /// </summary>
         /// <param name="dbConnection"></param>
         /// <param name="storedProcedureName"></param>
@@ -155,7 +157,9 @@ namespace Roslan.DotNetUtils.Db.Data {
             await using var dbCommand = dbConnection.CreateCommand();
             dbCommand.CommandText = storedProcedureName;
             dbCommand.CommandType = CommandType.StoredProcedure;
-            dbCommand.Parameters.AddRange(parameters);
+
+            if (parameters != null && parameters.Length > 0)
+                dbCommand.Parameters.AddRange(parameters);
 
             await dbConnection.OpenAsync();
 
@@ -168,7 +172,9 @@ namespace Roslan.DotNetUtils.Db.Data {
             using (var dbCommand = dbConnection.CreateCommand()) {
                 dbCommand.CommandText = storedProcedureName;
                 dbCommand.CommandType = CommandType.StoredProcedure;
-                dbCommand.Parameters.AddRange(parameters);
+
+                if (parameters != null && parameters.Length > 0)
+                    dbCommand.Parameters.AddRange(parameters);
 
                 await dbConnection.OpenAsync();
 
@@ -177,7 +183,6 @@ namespace Roslan.DotNetUtils.Db.Data {
                 }
             }
 #endif
-
             return result;
         }
     }
