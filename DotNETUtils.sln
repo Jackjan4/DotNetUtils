@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetUtils.TestNet8.0", "D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetUtils.WinForms", "DotNetUtils.WinForms\DotNetUtils.WinForms.csproj", "{B722B4FE-A027-4A60-A954-26BBE2B6FE4B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetUtils.Db", "DotNetUtils.Db\DotNetUtils.Db.csproj", "{1ED73340-6512-4E37-B4D6-DD18B1B153EE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetUtils.Db", "DotNetUtils.Db\DotNetUtils.Db.csproj", "{7C670626-2BA0-4319-9C7F-D7894E5FB8C3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +29,10 @@ Global
 		{B722B4FE-A027-4A60-A954-26BBE2B6FE4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B722B4FE-A027-4A60-A954-26BBE2B6FE4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B722B4FE-A027-4A60-A954-26BBE2B6FE4B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1ED73340-6512-4E37-B4D6-DD18B1B153EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1ED73340-6512-4E37-B4D6-DD18B1B153EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1ED73340-6512-4E37-B4D6-DD18B1B153EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1ED73340-6512-4E37-B4D6-DD18B1B153EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C670626-2BA0-4319-9C7F-D7894E5FB8C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C670626-2BA0-4319-9C7F-D7894E5FB8C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C670626-2BA0-4319-9C7F-D7894E5FB8C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C670626-2BA0-4319-9C7F-D7894E5FB8C3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

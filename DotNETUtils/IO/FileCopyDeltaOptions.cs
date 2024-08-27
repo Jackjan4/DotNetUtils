@@ -21,7 +21,7 @@ namespace Roslan.DotNetUtils.IO {
 		private FileCopyDeltaOptions() {
 			CompareBufferSize = 4096;
 			CopyBufferSize = 4096;
-			CompareMethod = FileCompareMethod.Md5Hash;
+			CompareMethod = FileCompareMethod.LastWriteTime;
 		}
 
 		public FileCopyDeltaOptions(int compareBufferSize, int copyBufferSize, FileCompareMethod compareMethod) {

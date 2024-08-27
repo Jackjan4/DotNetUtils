@@ -71,9 +71,5 @@
       <Version>1.60.6</Version>
     </PackageReference>
   </ItemGroup>
-  
-    <ItemGroup>
-      <None Include="https:\github.com\Jackjan4\DotNetUtils\blob\master\README.md" />
-    </ItemGroup>
 
 </Project>
