@@ -8,16 +8,20 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>Roslan.DotNetUtils.Db</PackageId>
     <Title>DotNetUtils.Db</Title>
-    <Version>1.1.0</Version>
+    <Version>1.1.1</Version>
     <Authors>Jan-Philipp Roslan</Authors>
     <RepositoryType>git</RepositoryType>
-    <AssemblyVersion>1.1.0</AssemblyVersion>
-    <FileVersion>1.1.0</FileVersion>
+    <AssemblyVersion>1.1.1</AssemblyVersion>
+    <FileVersion>1.1.1</FileVersion>
     <NeutralLanguage>en</NeutralLanguage>
     <IncludeSymbols>True</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <Product>Roslan.DotNetUtils.Db</Product>
     <PackageReleaseNotes></PackageReleaseNotes>
+    <Copyright>Licensed under MIT License</Copyright>
+    <RepositoryUrl>https://github.com/Jackjan4/DotNetUtils</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0|AnyCPU'">
@@ -67,5 +71,9 @@
       <Version>1.60.6</Version>
     </PackageReference>
   </ItemGroup>
+  
+    <ItemGroup>
+      <None Include="https:\github.com\Jackjan4\DotNetUtils\blob\master\README.md" />
+    </ItemGroup>
 
 </Project>

@@ -149,8 +149,52 @@ namespace Roslan.DotNetUtils.Db.Data {
         /// <param name="storedProcedureName"></param>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        public static async Task<DataTable> ExecuteStoredProcedureAsync(DbConnection dbConnection,
-            string storedProcedureName, params DbParameter[] parameters) {
+        public static DataTable ExecuteStoredProcedure(DbConnection dbConnection, string storedProcedureName, params DbParameter[] parameters) {
+            var result = new DataTable();
+
+#if NET8_0_OR_GREATER
+            using var dbCommand = dbConnection.CreateCommand();
+            dbCommand.CommandText = storedProcedureName;
+            dbCommand.CommandType = CommandType.StoredProcedure;
+
+            if (parameters != null && parameters.Length > 0)
+                dbCommand.Parameters.AddRange(parameters);
+
+            dbConnection.Open();
+
+            using var reader = dbCommand.ExecuteReader(CommandBehavior.CloseConnection);
+            result.BeginLoadData();
+            result.Load(reader);
+            result.EndLoadData();
+#else
+            // C# Version 7.3
+            using (var dbCommand = dbConnection.CreateCommand()) {
+                dbCommand.CommandText = storedProcedureName;
+                dbCommand.CommandType = CommandType.StoredProcedure;
+
+                if (parameters != null && parameters.Length > 0)
+                    dbCommand.Parameters.AddRange(parameters);
+
+                dbConnection.Open();
+
+                using (var reader = dbCommand.ExecuteReader(CommandBehavior.CloseConnection)) {
+                    result.Load(reader);
+                }
+            }
+#endif
+            return result;
+        }
+
+
+
+        /// <summary>
+        /// Executes a stored procedure asynchronously and returns the result as a DataTable.
+        /// </summary>
+        /// <param name="dbConnection"></param>
+        /// <param name="storedProcedureName"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        public static async Task<DataTable> ExecuteStoredProcedureAsync(DbConnection dbConnection, string storedProcedureName, params DbParameter[] parameters) {
             var result = new DataTable();
 
 #if NET8_0_OR_GREATER
