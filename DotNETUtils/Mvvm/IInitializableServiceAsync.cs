@@ -13,14 +13,14 @@ namespace Roslan.DotNetUtils.Mvvm {
         /// <summary>
         /// Determines whether the service has been initialized.
         /// </summary>
-        public bool IsInitialized { get; set; }
+        bool IsInitialized { get; set; }
 
 
 
-        public Task InitializeAsync();
+        Task InitializeAsync();
 
 
 
-        public Task DeInitializeAsync();
+        Task DeInitializeAsync();
     }
 }
