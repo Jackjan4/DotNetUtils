@@ -155,11 +155,14 @@ namespace Roslan.DotNetUtils.IO {
         public static async Task CopyFileDeltaAsync(string sourceFilePath, string destinationFilePath, FileCopyDeltaOptions options = null, IProgress<long> progress = null) {
             options = options ?? FileCopyDeltaOptions.Default;
 
+            // Define variable outside of switch statement to be able to use it later if needed
+            long sourceFileSize = -1;
+
             var filesEqual = false;
             if (File.Exists(destinationFilePath))
                 switch (options.CompareMethod) {
                     case FileCompareMethod.FileSize:
-                        var sourceFileSize = new FileInfo(sourceFilePath).Length;
+                        sourceFileSize = new FileInfo(sourceFilePath).Length;
                         var destinationFileSize = new FileInfo(destinationFilePath).Length;
                         filesEqual = sourceFileSize.Equals(destinationFileSize);
                         break;
@@ -179,7 +182,17 @@ namespace Roslan.DotNetUtils.IO {
             if (!filesEqual) {
                 await CopyFileAsync(sourceFilePath, destinationFilePath, options.CopyBufferSize, progress).ConfigureAwait(false);
             } else {
-                progress?.Report(-1); // Report that the file was not copied because it was equal by reporting -1
+                // File is equal
+
+                if (options.ProgressEqualFile) {
+                    if (sourceFileSize == -1)
+                        sourceFileSize = new FileInfo(sourceFilePath).Length;
+
+                    progress?.Report(sourceFileSize);
+                } else {
+                    progress?.Report(-1); // Report that the file was not copied because it was equal by reporting -1
+                }
+
             }
         }
 

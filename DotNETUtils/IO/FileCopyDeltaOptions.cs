@@ -13,7 +13,9 @@ namespace Roslan.DotNetUtils.IO {
 
 		public readonly int CopyBufferSize;
 
-		public FileCompareMethod CompareMethod;
+		public readonly FileCompareMethod CompareMethod;
+
+        public readonly bool ProgressEqualFile;
 
 
 		public static FileCopyDeltaOptions Default => new FileCopyDeltaOptions();
@@ -22,12 +24,14 @@ namespace Roslan.DotNetUtils.IO {
 			CompareBufferSize = 4096;
 			CopyBufferSize = 4096;
 			CompareMethod = FileCompareMethod.LastWriteTime;
-		}
+            ProgressEqualFile = true;
+        }
 
-		public FileCopyDeltaOptions(int compareBufferSize, int copyBufferSize, FileCompareMethod compareMethod) {
+		public FileCopyDeltaOptions(int compareBufferSize, int copyBufferSize, FileCompareMethod compareMethod, bool progressEqualFile) {
 			CompareBufferSize = compareBufferSize;
 			CopyBufferSize = copyBufferSize;
 			CompareMethod = compareMethod;
-		}
+            ProgressEqualFile = progressEqualFile;
+        }
 	}
 }
