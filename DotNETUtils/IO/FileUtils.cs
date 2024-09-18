@@ -212,33 +212,12 @@ namespace Roslan.DotNetUtils.IO {
         /// <param name="progress"></param>
         /// <returns></returns>
         public static async Task CopyFileAsync(string sourceFilePath, string destinationFilePath, int bufferSize = 4096, IProgress<long> progress = null) {
-#if (NETSTANDARD2_0 || NET46)
-			using (var sFs = new FileStream(sourceFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
-				using (var dFs = new FileStream(destinationFilePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
-					var buffer = new byte[bufferSize];
-					int bytesRead;
-					while ((bytesRead = await sFs.ReadAsync(buffer, 0, bufferSize).ConfigureAwait(false)) != 0) {
-						await dFs.WriteAsync(buffer, 0, bufferSize).ConfigureAwait(false);
-						progress?.Report(bytesRead);
-					}
-				}
-			}
-#elif NET8_0_OR_GREATER
-            await using (var sFs = new FileStream(sourceFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
-                await using (var dFs = new FileStream(destinationFilePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
-                    byte[] buffer = ArrayPool<byte>.Shared.Rent(bufferSize);
-                    try {
-                        int bytesRead;
-                        while ((bytesRead = await sFs.ReadAsync(new Memory<byte>(buffer)).ConfigureAwait(false)) != 0) {
-                            await dFs.WriteAsync(new ReadOnlyMemory<byte>(buffer, 0, bytesRead)).ConfigureAwait(false);
-                            progress?.Report(bytesRead);
-                        }
-                    } finally {
-                        ArrayPool<byte>.Shared.Return(buffer);
-                    }
-                }
-            }
-#endif
+
+            var sourceFs = new FileStream(sourceFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan);
+            var destinationFs = new FileStream(destinationFilePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan);
+
+            await StreamUtils.CopyToAsync(sourceFs, destinationFs, bufferSize, progress);
+
             // Recreate FileInfo properties
             File.SetLastWriteTime(destinationFilePath, File.GetLastWriteTime(sourceFilePath));
         }
