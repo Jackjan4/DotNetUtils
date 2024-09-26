@@ -7,12 +7,12 @@
     <AssemblyName>DotNetUtils.Blazor</AssemblyName>
     <RootNamespace>Roslan.DotNetUtils.Blazor</RootNamespace>
     <Title>DotNetUtils.Blazor</Title>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <Authors>Jan-Philipp Roslan</Authors>
     <Company />
     <Product>DotNetUtils.Blazor</Product>
-    <AssemblyVersion>1.0.0</AssemblyVersion>
-    <FileVersion>1.0.0</FileVersion>
+    <AssemblyVersion>1.0.1</AssemblyVersion>
+    <FileVersion>1.0.1</FileVersion>
     <NeutralLanguage>en</NeutralLanguage>
     <IncludeSymbols>True</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
