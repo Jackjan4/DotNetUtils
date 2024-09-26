@@ -118,25 +118,20 @@ namespace Roslan.DotNetUtils.IO {
         /// <param name="options"></param>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         public static void CopyFileDelta(string sourceFilePath, string destinationFilePath, FileCopyDeltaOptions options = null) {
+            if (sourceFilePath == null) throw new ArgumentNullException(nameof(sourceFilePath));
+            if (destinationFilePath == null) throw new ArgumentNullException(nameof(destinationFilePath));
+
             options = options ?? FileCopyDeltaOptions.Default;
 
             var filesEqual = false;
-            if (File.Exists(destinationFilePath))
-                switch (options.CompareMethod) {
-                    case FileCompareMethod.FileSize:
-                        filesEqual =
-                            new FileInfo(sourceFilePath).Length.Equals(new FileInfo(destinationFilePath).Length);
-                        break;
-                    case FileCompareMethod.Md5Hash:
-                        filesEqual = CompareMd5FileHashes(sourceFilePath, destinationFilePath, options.CompareBufferSize);
-                        break;
-                    case FileCompareMethod.LastWriteTime:
-                        filesEqual = File.GetLastWriteTime(sourceFilePath)
-                            .Equals(File.GetLastWriteTime(destinationFilePath));
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException(nameof(options.CompareMethod), options.CompareMethod, null);
-                }
+
+            if (File.Exists(destinationFilePath)) {
+                var sourceFileInfo = new FileCompareFileInfo(sourceFilePath, options.CompareBufferSize);
+                var destinationFileInfo = new FileCompareFileInfo(destinationFilePath, options.CompareBufferSize);
+
+                filesEqual = CompareFileInfo(sourceFileInfo, destinationFileInfo, options.CompareMethod);
+            }
+
             if (!filesEqual) {
                 File.Copy(sourceFilePath, destinationFilePath, true);
             }
@@ -153,42 +148,26 @@ namespace Roslan.DotNetUtils.IO {
         /// <param name="progress"></param>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         public static async Task CopyFileDeltaAsync(string sourceFilePath, string destinationFilePath, FileCopyDeltaOptions options = null, IProgress<long> progress = null) {
+            if (sourceFilePath == null) throw new ArgumentNullException(nameof(sourceFilePath));
+            if (destinationFilePath == null) throw new ArgumentNullException(nameof(destinationFilePath));
+
             options = options ?? FileCopyDeltaOptions.Default;
 
-            // Define variable outside of switch statement to be able to use it later if needed
-            long sourceFileSize = -1;
+            var sourceFileInfo = new FileCompareFileInfo(sourceFilePath, options.CompareBufferSize);
 
             var filesEqual = false;
-            if (File.Exists(destinationFilePath))
-                switch (options.CompareMethod) {
-                    case FileCompareMethod.FileSize:
-                        sourceFileSize = new FileInfo(sourceFilePath).Length;
-                        var destinationFileSize = new FileInfo(destinationFilePath).Length;
-                        filesEqual = sourceFileSize.Equals(destinationFileSize);
-                        break;
-#if NET8_0_OR_GREATER // Only available in .NET 8 and later since only then this library supports async MD5 file hashing
-                    case FileCompareMethod.Md5Hash:
-                        filesEqual = await CompareMd5FileHashesAsync(sourceFilePath, destinationFilePath, options.CompareBufferSize).ConfigureAwait(false);
-                        break;
-#endif
-                    case FileCompareMethod.LastWriteTime:
-                        var sourceLastWriteTime = File.GetLastWriteTime(sourceFilePath);
-                        var destinationLastWriteTime = File.GetLastWriteTime(destinationFilePath);
-                        filesEqual = sourceLastWriteTime.Equals(destinationLastWriteTime);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException(nameof(options.CompareMethod), options.CompareMethod, null);
-                }
+            if (File.Exists(destinationFilePath)) {
+                var destinationFileInfo = new FileCompareFileInfo(destinationFilePath, options.CompareBufferSize);
+
+                filesEqual = await CompareFileInfoAsync(sourceFileInfo, destinationFileInfo, options.CompareMethod);
+            }
+
             if (!filesEqual) {
                 await CopyFileAsync(sourceFilePath, destinationFilePath, options.CopyBufferSize, progress).ConfigureAwait(false);
             } else {
                 // File is equal
-
                 if (options.ProgressEqualFile) {
-                    if (sourceFileSize == -1)
-                        sourceFileSize = new FileInfo(sourceFilePath).Length;
-
-                    progress?.Report(sourceFileSize);
+                    progress?.Report(sourceFileInfo.Size);
                 } else {
                     progress?.Report(-1); // Report that the file was not copied because it was equal by reporting -1
                 }
@@ -216,10 +195,94 @@ namespace Roslan.DotNetUtils.IO {
             var sourceFs = new FileStream(sourceFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan);
             var destinationFs = new FileStream(destinationFilePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan);
 
-            await StreamUtils.CopyToAsync(sourceFs, destinationFs, bufferSize, progress);
+            using (sourceFs) {
+                using (destinationFs) {
+                    await StreamUtils.CopyToAsync(sourceFs, destinationFs, bufferSize, progress);
+                }
+            }
 
             // Recreate FileInfo properties
             File.SetLastWriteTime(destinationFilePath, File.GetLastWriteTime(sourceFilePath));
+        }
+
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sourceFileInfo"></param>
+        /// <param name="destinationFileInfo"></param>
+        /// <param name="compareMethod"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public static bool CompareFileInfo(ICompareFileInfo sourceFileInfo, ICompareFileInfo destinationFileInfo, FileCompareMethod compareMethod) {
+            var filesEqual = false;
+
+            switch (compareMethod) {
+                case FileCompareMethod.FileSize:
+                    filesEqual = sourceFileInfo.Size.Equals(destinationFileInfo.Size);
+                    break;
+                case FileCompareMethod.Md5Hash:
+                    if (!sourceFileInfo.SupportHash || !destinationFileInfo.SupportHash)
+                        throw new NotSupportedException("Hash comparison is not supported for one or both files.");
+
+                    var sourceStream = sourceFileInfo.OpenReadStream();
+                    var destinationStream = destinationFileInfo.OpenReadStream();
+
+                    var sourceHash = HashUtils.Md5(sourceStream);
+                    var destinationHash = HashUtils.Md5(destinationStream);
+
+                    filesEqual = sourceHash.SequenceEqual(destinationHash);
+                    break;
+                case FileCompareMethod.LastWriteTime:
+                    filesEqual = sourceFileInfo.LastWriteTime.Equals(destinationFileInfo.LastWriteTime);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(compareMethod), compareMethod, null);
+            }
+
+            return filesEqual;
+        }
+
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sourceFileInfo"></param>
+        /// <param name="destinationFileInfo"></param>
+        /// <param name="compareMethod"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public static async Task<bool> CompareFileInfoAsync(ICompareFileInfo sourceFileInfo, ICompareFileInfo destinationFileInfo, FileCompareMethod compareMethod) {
+            var filesEqual = false;
+
+            switch (compareMethod) {
+                case FileCompareMethod.FileSize:
+                    filesEqual = sourceFileInfo.Size.Equals(destinationFileInfo.Size);
+                    break;
+#if NET8_0_OR_GREATER
+                case FileCompareMethod.Md5Hash:
+                    if (!sourceFileInfo.SupportHash || !destinationFileInfo.SupportHash)
+                        throw new NotSupportedException("Hash comparison is not supported for one or both files.");
+
+                    var sourceStream = sourceFileInfo.OpenReadStream();
+                    var destinationStream = destinationFileInfo.OpenReadStream();
+
+                    var sourceHash = await HashUtils.Md5Async(sourceStream);
+                    var destinationHash = await HashUtils.Md5Async(destinationStream);
+
+                    filesEqual = sourceHash.SequenceEqual(destinationHash);
+                    break;
+#endif
+                case FileCompareMethod.LastWriteTime:
+                    filesEqual = sourceFileInfo.LastWriteTime.Equals(destinationFileInfo.LastWriteTime);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(compareMethod), compareMethod, null);
+            }
+
+            return filesEqual;
         }
     }
 }

@@ -29,7 +29,7 @@ namespace DotNetUtils.TestNet8._0 {
 			var sw = new Stopwatch();
 
 			sw.Restart();
-			await FileUtils.CopyFileDeltaAsync(sourceFile, destFile, new FileCopyDeltaOptions(1028 * 128, 1028 * 128, FileCompareMethod.LastWriteTime), progress);
+			await FileUtils.CopyFileDeltaAsync(sourceFile, destFile, new FileCopyDeltaOptions(1028 * 128, 1028 * 128, FileCompareMethod.LastWriteTime, true), progress);
 			sw.Stop();
 
 			_output.WriteLine("Time: {0}", sw.ElapsedMilliseconds);

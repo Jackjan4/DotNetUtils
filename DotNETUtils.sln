@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetUtils.WinForms", "Dot
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetUtils.Db", "DotNetUtils.Db\DotNetUtils.Db.csproj", "{7C670626-2BA0-4319-9C7F-D7894E5FB8C3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetUtils.Blazor", "DotNetUtils.Blazor\DotNetUtils.Blazor.csproj", "{6608D284-1DD9-41B8-9229-B3E6A828BE59}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{7C670626-2BA0-4319-9C7F-D7894E5FB8C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C670626-2BA0-4319-9C7F-D7894E5FB8C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7C670626-2BA0-4319-9C7F-D7894E5FB8C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6608D284-1DD9-41B8-9229-B3E6A828BE59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6608D284-1DD9-41B8-9229-B3E6A828BE59}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6608D284-1DD9-41B8-9229-B3E6A828BE59}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6608D284-1DD9-41B8-9229-B3E6A828BE59}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -23,19 +23,13 @@ namespace Roslan.DotNetUtils.IO {
         /// <returns></returns>
         public static async Task CopyToAsync(Stream source, Stream destination, int bufferSize = 4096, IProgress<long> progress = null) {
 #if (NETSTANDARD2_0 || NET46)
-            using (source) {
-                using (destination) {
                     var buffer = new byte[bufferSize];
                     int bytesRead;
                     while ((bytesRead = await source.ReadAsync(buffer, 0, bufferSize).ConfigureAwait(false)) != 0) {
                         await destination.WriteAsync(buffer, 0, bufferSize).ConfigureAwait(false);
                         progress?.Report(bytesRead);
                     }
-                }
-            }
 #elif NET8_0_OR_GREATER
-            await using (source) {
-                await using (destination) {
                     var buffer = ArrayPool<byte>.Shared.Rent(bufferSize);
                     try {
                         int bytesRead;
@@ -47,8 +41,6 @@ namespace Roslan.DotNetUtils.IO {
                         // This finally block is copied from the .NET source code. (.NET 8 implementation of Stream.CopyToAsync)
                         ArrayPool<byte>.Shared.Return(buffer);
                     }
-                }
-            }
 #endif
         }
     }
