@@ -39,6 +39,7 @@ public class BlazorCompareFileInfo : ICompareFileInfo {
     /// <param name="readBufferSize"></param>
     public BlazorCompareFileInfo(IBrowserFile fileHandle, int readBufferSize) {
         _fileHandle = fileHandle;
+
         _readBufferSize = readBufferSize;
         SupportSize = true;
 
