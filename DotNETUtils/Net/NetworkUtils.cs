@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading.Tasks;
@@ -39,20 +40,23 @@ namespace Roslan.DotNetUtils.Net {
         /// </summary>
         /// <param name="hostNameOrIpAddress">The DNS hostname or the IP address of the server that should be pinged.</param>
         /// <param name="timeout">The timeout after which the ping should fail.</param>
+        /// <param name="dontFragment">Sets whether the packet should be allowed to be fragmented.</param>
+        /// <param name="ttl">The number of gateways the packet is allowed to surpass.</param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException">hostNameOrAddress is null or is an empty string ("").</exception>
         /// <exception cref="InvalidOperationException">A call to SendAsync(String, Object) method is already in progress.</exception>
         /// <exception cref="PingException">An exception was thrown while sending or receiving the ICMP messages. See the inner exception for the exact exception that was thrown.</exception>
         /// <exception cref="SocketException">hostNameOrAddress could not be resolved to a valid IP address</exception>
         /// <exception cref="ObjectDisposedException"></exception>
-        public static bool Ping(string hostNameOrIpAddress, int timeout = 5000) {
+        public static PingReply Ping(string hostNameOrIpAddress, int timeout = 5000, bool dontFragment = true, int ttl = 128) {
             using (var ping = new Ping()) {
                 var pingOptions = new PingOptions {
-                    DontFragment = true
+                    DontFragment = dontFragment,
+                    Ttl = ttl
                 };
 
                 var result = ping.Send(hostNameOrIpAddress, timeout);
-                return result.Status == IPStatus.Success;
+                return result;
             }
         }
 
@@ -63,20 +67,23 @@ namespace Roslan.DotNetUtils.Net {
         /// </summary>
         /// <param name="hostNameOrIpAddress">The DNS hostname or the IP address of the server that should be pinged.</param>
         /// <param name="timeout">The timeout after which the ping should fail.</param>
+        /// <param name="dontFragment">Sets whether the packet should be allowed to be fragmented.</param>
+        /// <param name="ttl">The number of gateways the packet is allowed to surpass.</param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException">hostNameOrAddress is null or is an empty string ("").</exception>
         /// <exception cref="InvalidOperationException">A call to SendAsync(String, Object) method is already in progress.</exception>
         /// <exception cref="PingException">An exception was thrown while sending or receiving the ICMP messages. See the inner exception for the exact exception that was thrown.</exception>
         /// <exception cref="SocketException">hostNameOrAddress could not be resolved to a valid IP address</exception>
         /// <exception cref="ObjectDisposedException"></exception>
-        public static async Task<bool> PingAsync(string hostNameOrIpAddress, int timeout = 5000) {
+        public static async Task<PingReply> PingAsync(string hostNameOrIpAddress, int timeout = 5000, bool dontFragment = true, int ttl = 128) {
             using (var ping = new Ping()) {
                 var pingOptions = new PingOptions {
-                    DontFragment = true,
+                    DontFragment = dontFragment,
+                    Ttl = ttl
                 };
 
                 var result = await ping.SendPingAsync(hostNameOrIpAddress, timeout);
-                return result.Status == IPStatus.Success;
+                return result;
             }
         }
     }
