@@ -44,13 +44,13 @@ namespace Roslan.DotNetUtils.Net {
         /// <exception cref="PingException">An exception was thrown while sending or receiving the ICMP messages. See the inner exception for the exact exception that was thrown.</exception>
         /// <exception cref="SocketException">hostNameOrAddress could not be resolved to a valid IP address</exception>
         /// <exception cref="ObjectDisposedException"></exception>
-        public static bool Ping(string hostNameOrIpAddress) {
+        public static bool Ping(string hostNameOrIpAddress, int timeout = 5000) {
             using (var ping = new Ping()) {
                 var pingOptions = new PingOptions {
                     DontFragment = true
                 };
 
-                var result = ping.Send(hostNameOrIpAddress);
+                var result = ping.Send(hostNameOrIpAddress, timeout);
                 return result.Status == IPStatus.Success;
             }
         }
@@ -67,13 +67,13 @@ namespace Roslan.DotNetUtils.Net {
         /// <exception cref="PingException">An exception was thrown while sending or receiving the ICMP messages. See the inner exception for the exact exception that was thrown.</exception>
         /// <exception cref="SocketException">hostNameOrAddress could not be resolved to a valid IP address</exception>
         /// <exception cref="ObjectDisposedException"></exception>
-        public static async Task<bool> PingAsync(string hostNameOrIpAddress) {
+        public static async Task<bool> PingAsync(string hostNameOrIpAddress, int timeout = 5000) {
             using (var ping = new Ping()) {
                 var pingOptions = new PingOptions {
-                    DontFragment = true
+                    DontFragment = true,
                 };
 
-                var result = await ping.SendPingAsync(hostNameOrIpAddress);
+                var result = await ping.SendPingAsync(hostNameOrIpAddress, timeout);
                 return result.Status == IPStatus.Success;
             }
         }
