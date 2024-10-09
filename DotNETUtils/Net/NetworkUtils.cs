@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 
 namespace Roslan.DotNetUtils.Net {
@@ -34,36 +35,47 @@ namespace Roslan.DotNetUtils.Net {
 
 
         /// <summary>
-        /// 
+        /// Pings a server.
         /// </summary>
-        /// <param name="hostNameOrIpAddress"></param>
+        /// <param name="hostNameOrIpAddress">The DNS hostname or the IP address of the server that should be pinged.</param>
         /// <returns></returns>
-        /// <exception cref="System.ArgumentNullException">Test</exception>
+        /// <exception cref="ArgumentNullException">hostNameOrAddress is null or is an empty string ("").</exception>
+        /// <exception cref="InvalidOperationException">A call to SendAsync(String, Object) method is already in progress.</exception>
+        /// <exception cref="PingException">An exception was thrown while sending or receiving the ICMP messages. See the inner exception for the exact exception that was thrown.</exception>
+        /// <exception cref="SocketException">hostNameOrAddress could not be resolved to a valid IP address</exception>
+        /// <exception cref="ObjectDisposedException"></exception>
         public static bool Ping(string hostNameOrIpAddress) {
-            var ping = new Ping();
-            var pingOptions = new PingOptions {
-                DontFragment = true
-            };
+            using (var ping = new Ping()) {
+                var pingOptions = new PingOptions {
+                    DontFragment = true
+                };
 
-            var result = ping.Send(hostNameOrIpAddress);
-            return result.Status == IPStatus.Success;
+                var result = ping.Send(hostNameOrIpAddress);
+                return result.Status == IPStatus.Success;
+            }
         }
 
 
 
         /// <summary>
-        /// 
+        /// Pings a server asynchronously.
         /// </summary>
-        /// <param name="hostNameOrIpAddress"></param>
+        /// <param name="hostNameOrIpAddress">The DNS hostname or the IP address of the server that should be pinged.</param>
         /// <returns></returns>
+        /// <exception cref="ArgumentNullException">hostNameOrAddress is null or is an empty string ("").</exception>
+        /// <exception cref="InvalidOperationException">A call to SendAsync(String, Object) method is already in progress.</exception>
+        /// <exception cref="PingException">An exception was thrown while sending or receiving the ICMP messages. See the inner exception for the exact exception that was thrown.</exception>
+        /// <exception cref="SocketException">hostNameOrAddress could not be resolved to a valid IP address</exception>
+        /// <exception cref="ObjectDisposedException"></exception>
         public static async Task<bool> PingAsync(string hostNameOrIpAddress) {
-            var ping = new Ping();
-            var pingOptions = new PingOptions {
-                DontFragment = true
-            };
+            using (var ping = new Ping()) {
+                var pingOptions = new PingOptions {
+                    DontFragment = true
+                };
 
-            var result = await ping.SendPingAsync(hostNameOrIpAddress);
-            return result.Status == IPStatus.Success;
+                var result = await ping.SendPingAsync(hostNameOrIpAddress);
+                return result.Status == IPStatus.Success;
+            }
         }
     }
 }
