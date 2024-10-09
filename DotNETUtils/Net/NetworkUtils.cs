@@ -38,6 +38,7 @@ namespace Roslan.DotNetUtils.Net {
         /// Pings a server.
         /// </summary>
         /// <param name="hostNameOrIpAddress">The DNS hostname or the IP address of the server that should be pinged.</param>
+        /// <param name="timeout">The timeout after which the ping should fail.</param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException">hostNameOrAddress is null or is an empty string ("").</exception>
         /// <exception cref="InvalidOperationException">A call to SendAsync(String, Object) method is already in progress.</exception>
@@ -61,6 +62,7 @@ namespace Roslan.DotNetUtils.Net {
         /// Pings a server asynchronously.
         /// </summary>
         /// <param name="hostNameOrIpAddress">The DNS hostname or the IP address of the server that should be pinged.</param>
+        /// <param name="timeout">The timeout after which the ping should fail.</param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException">hostNameOrAddress is null or is an empty string ("").</exception>
         /// <exception cref="InvalidOperationException">A call to SendAsync(String, Object) method is already in progress.</exception>
