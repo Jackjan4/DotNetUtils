@@ -22,7 +22,7 @@ namespace DotNetUtils.TestNet8._0 {
 			var sourceFile = @"C:\Program Files\brand\Starter3\Starter3.exe";
 			var destFile = @"\\srvfbapp\brand_tools$\Starter3\setup\Starter3.exe";
 
-			var progress = new Progress<Tuple<long, long, bool>>(x => {
+			var progress = new Progress<long>(x => {
 				//_output.WriteLine("Copied: {0} of {1} bytes {2}", x.Item1, x.Item2, x.Item3);
 			});
 
