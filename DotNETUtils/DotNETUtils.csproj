@@ -4,7 +4,7 @@
     <TargetFrameworks>netstandard2.0;net8.0;net4.6</TargetFrameworks>
     <RootNamespace>Roslan.DotNetUtils</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.14.0</Version>
+    <Version>1.14.1</Version>
     <Authors>Jan-Philipp Roslan</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/Jackjan4/DotNetUtils/tree/master/DotNETUtils</PackageProjectUrl>
@@ -14,8 +14,8 @@
     <Company></Company>
     <NeutralLanguage>en</NeutralLanguage>
     <PackageReleaseNotes>Added InitializableService &amp; InitializableServiceAsync</PackageReleaseNotes>
-    <AssemblyVersion>1.14.0</AssemblyVersion>
-    <FileVersion>1.14.0</FileVersion>
+    <AssemblyVersion>1.14.1</AssemblyVersion>
+    <FileVersion>1.14.1</FileVersion>
     <Description>Common utilities for .NET applications</Description>
     <Title>Roslan.DotNetUtils</Title>
     <RepositoryType>git</RepositoryType>
