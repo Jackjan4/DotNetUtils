@@ -10,7 +10,6 @@ namespace Roslan.DotNetUtils.Collections {
 
     /// <summary>
     /// Acts as a read-only wrapper around an ObservableNotifyCollection.
-    /// 
     /// </summary>
     public class ReadOnlyObservableNotifyCollection<T> : ReadOnlyObservableCollectionEx<T> where T : INotifyPropertyChanged {
 
