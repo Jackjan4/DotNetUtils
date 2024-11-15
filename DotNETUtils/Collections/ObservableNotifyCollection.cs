@@ -21,7 +21,7 @@ namespace Roslan.DotNetUtils.Collections {
         /// <summary>
         /// 
         /// </summary>
-        public PropertyChangedEventHandler ItemChanged;
+        public PropertyChangedEventHandler ItemPropertyChanged;
 
 
 
@@ -29,7 +29,7 @@ namespace Roslan.DotNetUtils.Collections {
         /// 
         /// </summary>
         public ObservableNotifyCollection() {
-            this.CollectionChanged += Items_CollectionChanged;
+            base.CollectionChanged += Items_CollectionChanged;
         }
 
 
@@ -39,7 +39,7 @@ namespace Roslan.DotNetUtils.Collections {
         /// </summary>
         /// <param name="collection"></param>
         public ObservableNotifyCollection(IEnumerable<T> collection) : base(collection) {
-            this.CollectionChanged += Items_CollectionChanged;
+            base.CollectionChanged += Items_CollectionChanged;
 
             foreach (var item in collection)
                 item.PropertyChanged += Item_PropertyChanged;
@@ -73,7 +73,7 @@ namespace Roslan.DotNetUtils.Collections {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-            ItemChanged?.Invoke(sender, e);
+            ItemPropertyChanged?.Invoke(sender, e);
         }
     }
 }
