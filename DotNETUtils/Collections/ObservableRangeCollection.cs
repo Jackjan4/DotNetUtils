@@ -5,8 +5,6 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 
 namespace Roslan.DotNetUtils.Collections {
 
