@@ -1,11 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
+using System.Linq;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 
+
+
 namespace Roslan.DotNetUtils.Net {
+
+
+
+    /// <summary>
+    /// 
+    /// </summary>
     public static class NetworkUtils {
 
 
@@ -15,22 +23,17 @@ namespace Roslan.DotNetUtils.Net {
         /// (The method is taken from Bibliothek.dll from Brandgroup (Volker Niemeyer), cleaned up and converted to C#)
         /// </summary>
         /// <returns></returns>
-        public static List<string> GetAllIpAddresses() {
-            var result = new List<string>();
+        public static IEnumerable<string> GetAllIpAddresses() {
 
-            // Accessing network can cause exceptions. Caller of this method has to handle them.
-            foreach (NetworkInterface netInterface in NetworkInterface.GetAllNetworkInterfaces()) {
+            var addresses = NetworkInterface.GetAllNetworkInterfaces()
+                .Where(itf =>
+                    itf.OperationalStatus == OperationalStatus.Up &&
+                    itf.NetworkInterfaceType != NetworkInterfaceType.Loopback)
+                .SelectMany(itf => itf.GetIPProperties().UnicastAddresses)
+                .Where(ipAddr => ipAddr.Address.AddressFamily == AddressFamily.InterNetwork)
+                .Select(ipAddr => ipAddr.Address.ToString());
 
-                // Skip loopback interfaces and interfaces that are not up
-                if (netInterface.OperationalStatus != OperationalStatus.Up || netInterface.NetworkInterfaceType == NetworkInterfaceType.Loopback)
-                    continue;
-                foreach (UnicastIPAddressInformation ipAddr in netInterface.GetIPProperties().UnicastAddresses) {
-                    if (ipAddr.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
-                        result.Add(ipAddr.Address.ToString());
-                    }
-                }
-            }
-            return result;
+            return addresses;
         }
 
 
