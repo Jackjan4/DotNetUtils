@@ -28,7 +28,7 @@ namespace Roslan.DotNetUtils.IO {
 
 
 
-#if NET8_0_OR_GREATER
+#if NET8_0_OR_GREATER // Async hashing only exists since .NET 5
         /// <summary>
         /// 
         /// </summary>
@@ -195,6 +195,7 @@ namespace Roslan.DotNetUtils.IO {
             var sourceFs = new FileStream(sourceFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan);
             var destinationFs = new FileStream(destinationFilePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan);
 
+            // TODO: Add await using for .NET 8
             using (sourceFs) {
                 using (destinationFs) {
                     await StreamUtils.CopyToAsync(sourceFs, destinationFs, bufferSize, progress);

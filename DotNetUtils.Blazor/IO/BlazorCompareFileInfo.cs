@@ -14,6 +14,8 @@ public class BlazorCompareFileInfo : ICompareFileInfo {
     #region "Fields"
     private readonly IBrowserFile _fileHandle;
     private readonly int _readBufferSize;
+
+    private readonly int _maxAllowedSize;
     #endregion
 
 
@@ -37,14 +39,14 @@ public class BlazorCompareFileInfo : ICompareFileInfo {
     /// </summary>
     /// <param name="fileHandle"></param>
     /// <param name="readBufferSize"></param>
-    public BlazorCompareFileInfo(IBrowserFile fileHandle, int readBufferSize) {
+    /// <param name="maxAllowedSize"></param>
+    public BlazorCompareFileInfo(IBrowserFile fileHandle, int readBufferSize, int maxAllowedSize = 512000) {
         _fileHandle = fileHandle;
-
         _readBufferSize = readBufferSize;
+        _maxAllowedSize = maxAllowedSize;
+
         SupportSize = true;
-
-        SupportHash = false;
-
+        SupportHash = true;
         SupportLastWriteTime = true;
     }
 
@@ -55,6 +57,6 @@ public class BlazorCompareFileInfo : ICompareFileInfo {
     /// </summary>
     /// <returns></returns>
     public Stream OpenReadStream() {
-        return _fileHandle.OpenReadStream(maxAllowedSize: 1024 * 1024 * 400);
+        return _fileHandle.OpenReadStream(_maxAllowedSize);
     }
 }

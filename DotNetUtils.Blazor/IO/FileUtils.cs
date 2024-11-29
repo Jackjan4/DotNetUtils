@@ -51,25 +51,26 @@ public class FileUtils {
     /// </summary>
     /// <param name="sourceFileHandle"></param>
     /// <param name="destinationFilePath"></param>
+    /// <param name="maxAllowedSize"></param>
     /// <param name="options"></param>
     /// <param name="progress"></param>
     /// <returns></returns>
-    public static async Task UploadFileDeltaAsync(IBrowserFile sourceFileHandle, string destinationFilePath, FileCopyDeltaOptions? options = null, IProgress<long>? progress = null) {
+    public static async Task UploadFileDeltaAsync(IBrowserFile sourceFileHandle, string destinationFilePath, int maxAllowedSize = 512000, FileCopyDeltaOptions? options = null, IProgress<long>? progress = null) {
         options ??= FileCopyDeltaOptions.Default;
 
         var filesEqual = false;
 
         // We declare sourceFileInfo here to be able to use it in the progress report
-        var sourceFileInfo = new BlazorCompareFileInfo(sourceFileHandle, options.CompareBufferSize);
+        var sourceFileInfo = new BlazorCompareFileInfo(sourceFileHandle, options.CompareBufferSize, maxAllowedSize);
 
         if (File.Exists(destinationFilePath)) {
             var destinationFileInfo = new FileCompareFileInfo(destinationFilePath, options.CompareBufferSize);
 
-            filesEqual = await Roslan.DotNetUtils.IO.FileUtils.CompareFileInfoAsync(sourceFileInfo, destinationFileInfo, options.CompareMethod);
+            filesEqual = await DotNetUtils.IO.FileUtils.CompareFileInfoAsync(sourceFileInfo, destinationFileInfo, options.CompareMethod);
         }
 
         if (!filesEqual) {
-            await using var sourceStream = sourceFileHandle.OpenReadStream(maxAllowedSize: 1024 * 1024 * 400);
+            await using var sourceStream = sourceFileHandle.OpenReadStream(maxAllowedSize);
             await using var destinationStream = File.Open(destinationFilePath, FileMode.Create, FileAccess.Write, FileShare.None);
             await StreamUtils.CopyToAsync(sourceStream, destinationStream, options.CopyBufferSize, progress);
         } else {
@@ -82,8 +83,8 @@ public class FileUtils {
         }
 
         // Recreate FileInfo properties
-        var dateTime = sourceFileHandle.LastModified.DateTime;
-        File.SetLastWriteTime(destinationFilePath, dateTime);
+        var dateTimeUtc = sourceFileHandle.LastModified.UtcDateTime;
+        File.SetLastWriteTimeUtc(destinationFilePath, dateTimeUtc);
     }
 
 }

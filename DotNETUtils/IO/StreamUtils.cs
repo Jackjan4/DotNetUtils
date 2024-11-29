@@ -8,6 +8,12 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Roslan.DotNetUtils.IO {
+
+
+
+    /// <summary>
+    /// 
+    /// </summary>
     public static class StreamUtils {
 
 

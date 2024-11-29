@@ -7,6 +7,9 @@ namespace Roslan.DotNetUtils.IO {
 
 
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class FileCompareFileInfo : ICompareFileInfo {
 
 
@@ -58,9 +61,7 @@ namespace Roslan.DotNetUtils.IO {
             _readBufferSize = readBufferSize;
 
             SupportSize = true;
-
             SupportHash = true;
-
             SupportLastWriteTime = true;
         }
 
