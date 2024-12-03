@@ -9,12 +9,17 @@ namespace Roslan.DotNetUtils.IO {
 
 
 
+    /// <summary>
+    /// 
+    /// </summary>
     public interface ICompareFileInfo {
 
-        long Size { get; }
-        bool SupportSize { get; }
 
-        bool SupportHash { get; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        long Size { get; }
 
 
 
@@ -22,8 +27,11 @@ namespace Roslan.DotNetUtils.IO {
         /// Blazor calls this IBrowserFile.LastModified
         /// IO.FileInfo calls this LastWriteTime
         /// </summary>
-        DateTime LastWriteTime { get; }
+        DateTime LastWriteTimeUtc { get; }
         bool SupportLastWriteTime { get; }
+        bool SupportSize { get; }
+
+        bool SupportHash { get; }
 
 
         Stream OpenReadStream();

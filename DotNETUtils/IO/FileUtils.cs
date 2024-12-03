@@ -9,6 +9,12 @@ using System.Threading.Tasks;
 using Roslan.DotNetUtils.Crypto;
 
 namespace Roslan.DotNetUtils.IO {
+
+
+
+    /// <summary>
+    /// 
+    /// </summary>
     public static class FileUtils {
 
 
@@ -36,9 +42,8 @@ namespace Roslan.DotNetUtils.IO {
         /// <param name="bufferSize"></param>
         /// <returns></returns>
         public static async Task<byte[]> Md5HashAsync(string path, int bufferSize = 4096) {
-            await using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
-                return await HashUtils.Md5Async(fs);
-            }
+            await using var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan);
+            return await HashUtils.Md5Async(fs);
         }
 #endif
 
@@ -65,9 +70,8 @@ namespace Roslan.DotNetUtils.IO {
         /// <param name="bufferSize"></param>
         /// <returns></returns>
         public static async Task<string> Md5HashStringAsync(string path, int bufferSize = 4096) {
-            await using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan)) {
-                return await HashUtils.Md5StringAsync(fs);
-            }
+            await using var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan);
+            return await HashUtils.Md5StringAsync(fs);
         }
 #endif
 
@@ -236,7 +240,7 @@ namespace Roslan.DotNetUtils.IO {
                     filesEqual = sourceHash.SequenceEqual(destinationHash);
                     break;
                 case FileCompareMethod.LastWriteTime:
-                    filesEqual = sourceFileInfo.LastWriteTime.Equals(destinationFileInfo.LastWriteTime);
+                    filesEqual = sourceFileInfo.LastWriteTimeUtc.Equals(destinationFileInfo.LastWriteTimeUtc);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(compareMethod), compareMethod, null);
@@ -263,21 +267,22 @@ namespace Roslan.DotNetUtils.IO {
                     filesEqual = sourceFileInfo.Size.Equals(destinationFileInfo.Size);
                     break;
 #if NET8_0_OR_GREATER
-                case FileCompareMethod.Md5Hash:
-                    if (!sourceFileInfo.SupportHash || !destinationFileInfo.SupportHash)
-                        throw new NotSupportedException("Hash comparison is not supported for one or both files.");
+                case FileCompareMethod.Md5Hash: {
+                        if (!sourceFileInfo.SupportHash || !destinationFileInfo.SupportHash)
+                            throw new NotSupportedException("Hash comparison is not supported for one or both files.");
 
-                    var sourceStream = sourceFileInfo.OpenReadStream();
-                    var destinationStream = destinationFileInfo.OpenReadStream();
+                        await using var sourceStream = sourceFileInfo.OpenReadStream();
+                        await using var destinationStream = destinationFileInfo.OpenReadStream();
 
-                    var sourceHash = await HashUtils.Md5Async(sourceStream);
-                    var destinationHash = await HashUtils.Md5Async(destinationStream);
+                        var sourceHash = await HashUtils.Md5Async(sourceStream);
+                        var destinationHash = await HashUtils.Md5Async(destinationStream);
 
-                    filesEqual = sourceHash.SequenceEqual(destinationHash);
-                    break;
+                        filesEqual = sourceHash.SequenceEqual(destinationHash);
+                        break;
+                    }
 #endif
                 case FileCompareMethod.LastWriteTime:
-                    filesEqual = sourceFileInfo.LastWriteTime.Equals(destinationFileInfo.LastWriteTime);
+                    filesEqual = sourceFileInfo.LastWriteTimeUtc.Equals(destinationFileInfo.LastWriteTimeUtc);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(compareMethod), compareMethod, null);

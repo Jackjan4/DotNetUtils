@@ -27,7 +27,7 @@ public class BlazorCompareFileInfo : ICompareFileInfo {
     public bool SupportSize { get; }
     public bool SupportHash { get; }
 
-    public DateTime LastWriteTime => _lastWriteTime ??= _fileHandle.LastModified.DateTime;
+    public DateTime LastWriteTimeUtc => _lastWriteTime ??= _fileHandle.LastModified.UtcDateTime;
     private DateTime? _lastWriteTime;
     public bool SupportLastWriteTime { get; }
     #endregion

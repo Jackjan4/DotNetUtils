@@ -16,9 +16,7 @@ namespace DotNetUtils.TestNet8._0 {
 
         public void Test1() {
 
-            var obs = new ObservableNotifyCollection<int>();
-
-            var rO = new ReadOnlyObservableNotifyCollection<int>(obs);
+            
 
         }
     }

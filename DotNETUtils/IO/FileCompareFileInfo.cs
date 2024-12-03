@@ -15,6 +15,7 @@ namespace Roslan.DotNetUtils.IO {
 
 
         #region "Fields"
+
         private readonly string _filePath;
         private readonly int _readBufferSize;
         #endregion
@@ -33,20 +34,24 @@ namespace Roslan.DotNetUtils.IO {
         }
         private long? _size;
 
-        public bool SupportSize { get; }
-        public bool SupportHash { get; }
 
-        public DateTime LastWriteTime {
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public DateTime LastWriteTimeUtc {
             get {
-                if (_lastWriteTime == null) {
-                    _lastWriteTime = new FileInfo(_filePath).LastWriteTime;
+                if (_lastWriteTimeUtc == null) {
+                    _lastWriteTimeUtc = new FileInfo(_filePath).LastWriteTimeUtc;
                 }
-                return _lastWriteTime.Value;
+                return _lastWriteTimeUtc.Value;
             }
         }
 
-        private DateTime? _lastWriteTime;
+        private DateTime? _lastWriteTimeUtc;
         public bool SupportLastWriteTime { get; }
+        public bool SupportSize { get; }
+        public bool SupportHash { get; }
         #endregion
 
 

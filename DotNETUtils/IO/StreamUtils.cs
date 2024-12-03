@@ -28,7 +28,7 @@ namespace Roslan.DotNetUtils.IO {
         /// <param name="progress"></param>
         /// <returns></returns>
         public static async Task CopyToAsync(Stream source, Stream destination, int bufferSize = 4096, IProgress<long> progress = null) {
-#if (NETSTANDARD2_0 || NET46)
+#if NETSTANDARD2_0 || NET46
                     var buffer = new byte[bufferSize];
                     int bytesRead;
                     while ((bytesRead = await source.ReadAsync(buffer, 0, bufferSize).ConfigureAwait(false)) != 0) {
