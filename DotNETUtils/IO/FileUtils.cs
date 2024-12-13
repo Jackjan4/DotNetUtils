@@ -195,19 +195,22 @@ namespace Roslan.DotNetUtils.IO {
         /// <param name="progress"></param>
         /// <returns></returns>
         public static async Task CopyFileAsync(string sourceFilePath, string destinationFilePath, int bufferSize = 4096, IProgress<long> progress = null) {
-
             var sourceFs = new FileStream(sourceFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan);
-            var destinationFs = new FileStream(destinationFilePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan);
+            var destinationFs = new FileStream(destinationFilePath, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan);
 
-            // TODO: Add await using for .NET 8
+#if NET8_0_OR_GREATER
+            await using (sourceFs) {
+                await using (destinationFs) {
+#else
             using (sourceFs) {
                 using (destinationFs) {
-                    await StreamUtils.CopyToAsync(sourceFs, destinationFs, bufferSize, progress);
+#endif
+                    await StreamUtils.CopyToAsync(sourceFs, destinationFs, bufferSize, progress).ConfigureAwait(false);
                 }
             }
 
             // Recreate FileInfo properties
-            File.SetLastWriteTime(destinationFilePath, File.GetLastWriteTime(sourceFilePath));
+            File.SetLastWriteTimeUtc(destinationFilePath, File.GetLastWriteTimeUtc(sourceFilePath));
         }
 
 
