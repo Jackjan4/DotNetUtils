@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="DotNetUtils.Blazor/DotNetUtils.Blazor.csproj" />
+  <Project Path="DotNetUtils.TestNet8.0/DotNetUtils.TestNet8.0.csproj" />
+  <Project Path="DotNetUtils.Text.Json/DotNetUtils.Text.Json.csproj" />
+  <Project Path="DotNetUtils.WinForms/DotNetUtils.WinForms.csproj" />
+  <Project Path="DotNetUtils/DotNetUtils.csproj" />
+</Solution>
